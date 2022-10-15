@@ -8,17 +8,18 @@ Auction Web Application Backend
 - Qais Alsgher
 - Yaser Odat
 - Saeed Kokash
+
 # Suggested Names:
-bidly
-bidbay
-eMazad
-bidHammer
-mazadkom
-emazad
-bidHall
-bidkom / bidcom
-bidbidpay
-bidsell
-auctionIt
-auctionak
-mazadjo
+- bidly
+- bidbay
+- eMazad
+- bidHammer
+- mazadkom
+- emazad
+- bidHall
+- bidkom / bidcom
+- bidbidpay
+- bidsell
+- auctionIt
+- auctionak
+- mazadjo
