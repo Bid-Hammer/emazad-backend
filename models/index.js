@@ -15,7 +15,7 @@ const user = require('./user.model');
 
 // for local testing 
 const POSTGRES_URL = 'postgresql://skokash:1094@localhost:5432/emazad';
-const sequelizeOption = { } 
+const sequelizeOption = {}
 
 let sequelize = new Sequelize(POSTGRES_URL, sequelizeOption);
 
@@ -27,6 +27,7 @@ let sequelize = new Sequelize(POSTGRES_URL, sequelizeOption);
 
 const db = {};
 db.sequelize = sequelize;
+db.User = require('./user.model')(sequelize, DataTypes);
 
 module.exports = db;
 

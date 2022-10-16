@@ -2,7 +2,7 @@
 
 // const jwt = require('jsonwebtoken');
 
-module.exports = ( sequelize, DataTypes ) => {
+module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define('User', {
         userName: {
             type: DataTypes.STRING,
@@ -47,42 +47,42 @@ module.exports = ( sequelize, DataTypes ) => {
             allowNull: false,
             defaultValue: "active",
         },
-        // token: {
-        //     type: DataTypes.VIRTUAL,
-        //     get() {
-        //         return jwt.sign({ email: this.email }, process.env.JWT_SECRET);
-        //     },
-        //     set(tokenObj) {
-        //         return jwt.sign(tokenObj, process.env.JWT_SECRET);
-        //     },
-        // },
-        // role: {
-        //     type: DataTypes.ENUM("admin", "user"),
-        //     allowNull: false,
-        //     defaultValue: "user"
-        // },
-        // capabilities: {
-        //     type: DataTypes.VIRTUAL,
-        //     get() {
-        //         const acl = {
-        //             user: ['read, create'],
-        //             admin: ['read', 'create', 'update', 'delete'],
-        //             blocked: []        
-        //         }
-        //         return acl[this.role];
-        //     }
-        // }
+        token: {
+            type: DataTypes.VIRTUAL,
+            get() {
+                return jwt.sign({ email: this.email }, process.env.JWT_SECRET);
+            },
+            set(tokenObj) {
+                return jwt.sign(tokenObj, process.env.JWT_SECRET);
+            },
+        },
+        role: {
+            type: DataTypes.ENUM("admin", "user"),
+            allowNull: false,
+            defaultValue: "user"
+        },
+        capabilities: {
+            type: DataTypes.VIRTUAL,
+            get() {
+                const acl = {
+                    user: ['read, create'],
+                    admin: ['read', 'create', 'update', 'delete'],
+                    blocked: []
+                }
+                return acl[this.role];
+            }
+        }
     });
 
-    // User.authenticateToken = (token) => {
-    //     return jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    //       if (err) {
-    //         return err;
-    //       } else {
-    //         return decoded;
-    //       }
-    //     });
-    //   };
-
-      return User;
+    User.authenticateToken = (token) => {
+        return jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+            if (err) {
+                return err;
+            } else {
+                return decoded;
+            }
+        });
     };
+
+    return User;
+};
