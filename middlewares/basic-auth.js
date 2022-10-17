@@ -1,5 +1,5 @@
 'use strict';
-const User = require('../models').User;
+const User = require('../models').userModel;
 
 const basicAuth = async (req, res, next) => {
 
