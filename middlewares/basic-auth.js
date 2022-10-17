@@ -8,7 +8,7 @@ const basicAuth = async (req, res, next) => {
         const userName = await User.findOne({ where: { userName: req.body.userName } });
 
         if (userName) {
-            return res.status(409).send('The Username alrady token');
+            return res.status(409).send('Username already exists');
 
         } else {
 
@@ -16,7 +16,7 @@ const basicAuth = async (req, res, next) => {
 
             if (email) {
 
-                return res.status(409).send('The Email alrady token');
+                return res.status(409).send('Email already exists');
             }
         }
         next();

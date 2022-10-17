@@ -1,7 +1,9 @@
 'use strict';
+
 const jwt = require('jsonwebtoken');
 
 module.exports = (sequelize, DataTypes) => {
+
     const User = sequelize.define('User', {
         userName: {
             type: DataTypes.STRING,
@@ -67,7 +69,6 @@ module.exports = (sequelize, DataTypes) => {
                 const acl = {
                     user: ['read, create'],
                     admin: ['read', 'create', 'update', 'delete'],
-                    blocked: []
                 }
                 return acl[this.role];
             }
