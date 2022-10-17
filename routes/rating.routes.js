@@ -3,7 +3,7 @@
 const express = require("express");
 const router = express.Router();
 
-const Rating = require("../models/rating.model");
+const {Rating} = require("../models");
 
 router.get("/rating", getRatings);
 router.get("/rating/:id", getRatingById);

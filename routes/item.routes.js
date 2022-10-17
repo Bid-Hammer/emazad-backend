@@ -3,6 +3,7 @@
 const express = require("express");
 const router = express.Router();
 const { Item } = require("../models");
+const { notificationModel } = require("../models");
 
 // Routes:
 
@@ -10,7 +11,8 @@ router.get("/items", getAllItems); // to the items in the database
 router.get("/items/:id", getItem); // to get one item with the id
 router.post("/item", addItem); // to add a new item to the list
 router.put("/item/:id", updateItem); // to update an item
-router.delete("./item/:id", deleteItem); // to delete an item from the list
+router.delete("/item/:id", deleteItem); // to delete an item from the list
+// router.get("/itemsnotif", getAllItemsWithNotifications); // to the items in the database
 
 // Functions:
 
@@ -46,5 +48,12 @@ async function deleteItem(req, res) {
   let deletedItem = await Item.delete(id);
   res.status(204).json({ deletedItem });
 }
+
+// async function getAllItemsWithNotifications(req, res) {
+//   let item = await Item.itemWithNotification(notificationModel);
+//   res.status(200).json({
+//     item,
+//   });
+// }
 
 module.exports = router;

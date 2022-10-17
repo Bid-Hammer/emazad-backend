@@ -3,20 +3,16 @@
 const express = require("express");
 const router = express.Router();
 
-const Report = require("../models/report.model");
+const { Report } = require("../models");
 
-
-router.get("/report",getReport);
-router.post("/report",  createReport);
+router.get("/report", getReport);
+router.post("/report", createReport);
 router.delete("/report/:id", deleteReport);
-router.get("/report/:id",getOneReport);
-
+router.get("/report/:id", getOneReport);
 
 async function getReport(req, res) {
   let report = await Report.read();
-  res.status(200).json(
-    report
-  );
+  res.status(200).json(report);
 }
 
 async function getOneReport(req, res) {
@@ -46,6 +42,5 @@ async function updateReport(req, res) {
   const updatedReport = await Report.update(id, obj);
   res.status(202).json(updatedReport);
 }
-
 
 module.exports = router;

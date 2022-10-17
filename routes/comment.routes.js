@@ -1,15 +1,15 @@
-'use strict';
+"use strict";
 
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const Comment = require('../models/comment.model');
+const { Comment } = require("../models");
 
-router.get('/comment', getComments);
-router.get('/comment/:id', getCommentById);
-router.post('/comment', createComment);
-router.put('/comment/:id', updateComment);
-router.delete('/comment/:id', deleteComment);
+router.get("/comment", getComments);
+router.get("/comment/:id", getCommentById);
+router.post("/comment", createComment);
+router.put("/comment/:id", updateComment);
+router.delete("/comment/:id", deleteComment);
 
 async function getComments(req, res) {
   try {

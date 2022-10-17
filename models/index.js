@@ -40,58 +40,133 @@ db.ratingModel = require("./rating.model")(sequelize, DataTypes);
 db.reportModel = require("./report.model")(sequelize, DataTypes);
 
 // User Associations
-db.userModel.hasMany(db.itemModel, { foreignKey: "id" });
-db.itemModel.belongsTo(db.userModel, { foreignKey: "id" });
+db.userModel.hasMany(db.itemModel, { foreignKey: "userID", sourceKey: "id" });
+db.itemModel.belongsTo(db.userModel, { foreignKey: "userID", targetKey: "id" });
 
-db.userModel.hasMany(db.bidModel, { foreignKey: "bidder_id" });
-db.bidModel.belongsTo(db.userModel, { foreignKey: "bidder_id" });
+db.userModel.hasMany(db.bidModel, { foreignKey: "userID", sourceKey: "id" });
+db.bidModel.belongsTo(db.userModel, { foreignKey: "userID", targetKey: "id" });
 
-db.userModel.hasMany(db.commentModel, { foreignKey: "commenter_id" });
-db.commentModel.belongsTo(db.userModel, { foreignKey: "commenter_id" });
+db.userModel.hasMany(db.commentModel, {
+  foreignKey: "userID",
+  sourceKey: "id",
+});
+db.commentModel.belongsTo(db.userModel, {
+  foreignKey: "userID",
+  targetKey: "id",
+});
 
-db.userModel.hasMany(db.favoriteModel, { foreignKey: "user_id" });
-db.favoriteModel.belongsTo(db.userModel, { foreignKey: "user_id" });
+db.userModel.hasMany(db.favoriteModel, {
+  foreignKey: "userID",
+  sourceKey: "id",
+});
+db.favoriteModel.belongsTo(db.userModel, {
+  foreignKey: "userID",
+  targetKey: "id",
+});
 
-db.userModel.hasMany(db.notificationModel, { foreignKey: "user_id" });
-db.notificationModel.belongsTo(db.userModel, { foreignKey: "user_id" });
+db.userModel.hasMany(db.notificationModel, {
+  foreignKey: "userID",
+  sourceKey: "id",
+});
+db.notificationModel.belongsTo(db.userModel, {
+  foreignKey: "userID",
+  targetKey: "id",
+});
 
-db.userModel.hasMany(db.ratingModel, { foreignKey: "rater_id" });
-db.ratingModel.belongsTo(db.userModel, { foreignKey: "rater_id" });
+db.userModel.hasMany(db.ratingModel, { foreignKey: "userID", sourceKey: "id" });
+db.ratingModel.belongsTo(db.userModel, {
+  foreignKey: "userID",
+  targetKey: "id",
+});
 
-db.userModel.hasMany(db.reportModel, { foreignKey: "reporter_id" });
-db.reportModel.belongsTo(db.userModel, { foreignKey: "reporter_id" });
+db.userModel.hasMany(db.reportModel, { foreignKey: "userID", sourceKey: "id" });
+db.reportModel.belongsTo(db.userModel, {
+  foreignKey: "userID",
+  targetKey: "id",
+});
 
 // Item Associations
-db.itemModel.hasMany(db.bidModel, { foreignKey: "item_id" });
-db.bidModel.belongsTo(db.itemModel, { foreignKey: "item_id" });
+db.itemModel.hasMany(db.bidModel, { foreignKey: "itemID", sourceKey: "id" });
+db.bidModel.belongsTo(db.itemModel, { foreignKey: "itemID", targetKey: "id" });
 
-db.itemModel.hasMany(db.commentModel, { foreignKey: "item_id" });
-db.commentModel.belongsTo(db.itemModel, { foreignKey: "item_id" });
+db.itemModel.hasMany(db.commentModel, {
+  foreignKey: "itemID",
+  sourceKey: "id",
+});
+db.commentModel.belongsTo(db.itemModel, {
+  foreignKey: "itemID",
+  targetKey: "id",
+});
 
-db.itemModel.hasMany(db.favoriteModel, { foreignKey: "item_id" });
-db.favoriteModel.belongsTo(db.itemModel, { foreignKey: "item_id" });
+db.itemModel.hasMany(db.favoriteModel, {
+  foreignKey: "itemID",
+  sourceKey: "id",
+});
+db.favoriteModel.belongsTo(db.itemModel, {
+  foreignKey: "itemID",
+  targetKey: "id",
+});
 
-db.itemModel.hasMany(db.notificationModel, { foreignKey: "item_id" });
-db.notificationModel.belongsTo(db.itemModel, { foreignKey: "item_id" });
+db.itemModel.hasMany(db.notificationModel, {
+  foreignKey: "itemID",
+  sourceKey: "id",
+});
+db.notificationModel.belongsTo(db.itemModel, {
+  foreignKey: "itemID",
+  targetKey: "id",
+});
 
-db.itemModel.hasMany(db.reportModel, { foreignKey: "item_id" });
-db.reportModel.belongsTo(db.itemModel, { foreignKey: "item_id" });
+db.itemModel.hasMany(db.reportModel, { foreignKey: "itemID", sourceKey: "id" });
+db.reportModel.belongsTo(db.itemModel, {
+  foreignKey: "itemID",
+  targetKey: "id",
+});
 
 // Notification Associations
-db.bidModel.hasMany(db.notificationModel, { foreignKey: "bid_id" });
-db.notificationModel.belongsTo(db.bidModel, { foreignKey: "bid_id" });
+db.bidModel.hasMany(db.notificationModel, {
+  foreignKey: "bidID",
+  sourceKey: "id",
+});
+db.notificationModel.belongsTo(db.bidModel, {
+  foreignKey: "bidID",
+  targetKey: "id",
+});
 
-db.commentModel.hasMany(db.notificationModel, { foreignKey: "comment_id" });
-db.notificationModel.belongsTo(db.commentModel, { foreignKey: "comment_id" });
+db.commentModel.hasMany(db.notificationModel, {
+  foreignKey: "commentID",
+  sourceKey: "id",
+});
+db.notificationModel.belongsTo(db.commentModel, {
+  foreignKey: "commentID",
+  targetKey: "id",
+});
 
-db.favoriteModel.hasMany(db.notificationModel, { foreignKey: "favorite_id" });
-db.notificationModel.belongsTo(db.favoriteModel, { foreignKey: "favorite_id" });
+db.favoriteModel.hasMany(db.notificationModel, {
+  foreignKey: "favoriteID",
+  sourceKey: "id",
+});
+db.notificationModel.belongsTo(db.favoriteModel, {
+  foreignKey: "favoriteID",
+  targetKey: "id",
+});
 
-db.ratingModel.hasMany(db.notificationModel, { foreignKey: "rating_id" });
-db.notificationModel.belongsTo(db.ratingModel, { foreignKey: "rating_id" });
+db.ratingModel.hasMany(db.notificationModel, {
+  foreignKey: "ratingID",
+  sourceKey: "id",
+});
+db.notificationModel.belongsTo(db.ratingModel, {
+  foreignKey: "ratingID",
+  targetKey: "id",
+});
 
-db.reportModel.hasMany(db.notificationModel, { foreignKey: "report_id" });
-db.notificationModel.belongsTo(db.reportModel, { foreignKey: "report_id" });
+db.reportModel.hasMany(db.notificationModel, {
+  foreignKey: "reportID",
+  sourceKey: "id",
+});
+db.notificationModel.belongsTo(db.reportModel, {
+  foreignKey: "reportID",
+  targetKey: "id",
+});
 
 db.Item = new collection(db.itemModel);
 db.Bid = new collection(db.bidModel);

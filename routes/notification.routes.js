@@ -3,7 +3,7 @@
 const express = require("express");
 const router = express.Router();
 
-const Notification = require("../models/notification.model");
+const { Notification } = require("../models");
 
 router.get("/notif", getNotifications);
 router.get("/notif/:id", getNotificationById);

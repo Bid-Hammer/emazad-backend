@@ -3,7 +3,7 @@
 const express = require("express");
 const router = express.Router();
 
-const Favorite = require("../models/favorite.model");
+const { Favorite } = require("../models");
 
 router.get("/favorite", getFavorites);
 router.get("/favorite/:id", getFavoriteById);
