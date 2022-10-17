@@ -1,5 +1,4 @@
 "use strict";
-
 class GeneralRoutes {
   constructor(model) {
     this.model = model;
@@ -41,6 +40,16 @@ class GeneralRoutes {
       console.log("Error in GeneralRoutes.delete: ", err.message);
     }
   }
+
+  // async itemWithNotification(notification) {
+  //   try {
+  //     return await this.model.findAll({
+  //       include: notification,
+  //     });
+  //   } catch (err) {
+  //     console.log("Error in GeneralRoutes.itemWithNotification: ", err.message);
+  //   }
+  // }
 }
 
 module.exports = GeneralRoutes;

@@ -3,20 +3,16 @@
 const express = require("express");
 const router = express.Router();
 
-const {Bid} = require("../models");
+const { Bid } = require("../models");
 
-
-router.get("/bid",getBid);
-router.post("/bid",  createBid);
+router.get("/bid", getBid);
+router.get("/bid/:id", getOneBid);
+router.post("/bid", createBid);
 router.delete("/bid/:id", deleteBid);
-router.get("/bid/:id",getOneBid);
-
 
 async function getBid(req, res) {
   let bid = await Bid.read();
-  res.status(200).json(
-    bid
-  );
+  res.status(200).json(bid);
 }
 
 async function getOneBid(req, res) {
@@ -38,7 +34,5 @@ async function deleteBid(req, res) {
   let deletedBid = await Bid.delete(id);
   res.status(204).send("deleted ");
 }
-
-
 
 module.exports = router;

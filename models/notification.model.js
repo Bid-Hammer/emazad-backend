@@ -1,7 +1,6 @@
 "use strict";
 
 module.exports = (sequelize, DataTypes) => {
-    
   const Notification = sequelize.define("Notification", {
     userID: {
       type: DataTypes.INTEGER,
@@ -9,7 +8,21 @@ module.exports = (sequelize, DataTypes) => {
     },
     itemID: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+    },
+    commentID: {
+      type: DataTypes.INTEGER,
+    },
+    bidID: {
+      type: DataTypes.INTEGER,
+    },
+    ratingID: {
+      type: DataTypes.INTEGER,
+    },
+    reportID: {
+      type: DataTypes.INTEGER,
+    },
+    favoriteID: {
+      type: DataTypes.INTEGER,
     },
     notiMessage: {
       type: DataTypes.STRING,
