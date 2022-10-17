@@ -3,7 +3,7 @@
 const express = require("express");
 const router = express.Router();
 
-const Bid = require("../models/bid.model");
+const {Bid} = require("../models");
 
 
 router.get("/bid",getBid);
