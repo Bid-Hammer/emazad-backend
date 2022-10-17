@@ -37,12 +37,12 @@ const Item = sequelize.define('Item', {
   },
 
   startDate: {
-    type: DataTypes.DATETIME2FROMPARTS, //not sure
+    type: DataTypes.DATE, //not sure
     allowNull: false,
   },
 
   endDate: {
-    type: DataTypes.DATETIME2FROMPARTS, //not sure
+    type: DataTypes.DATE, //not sure
     allowNull: false,
   },
 

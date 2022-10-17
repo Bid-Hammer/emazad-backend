@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
+const {Item} = require('../models/index')
 
 // const {Item, Bid, commentModel} =require('../models/index')
 
