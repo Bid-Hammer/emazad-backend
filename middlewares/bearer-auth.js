@@ -1,5 +1,5 @@
 'use strict';
-const User = require('../models').db.User;
+const User = require('../models').User;
 
 const bearerAuth = async (req, res, next) => {
     if (!req.headers.authorization) {

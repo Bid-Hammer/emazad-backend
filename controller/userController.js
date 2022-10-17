@@ -1,24 +1,24 @@
 `use strict`;
-const bcrypt = require('bcrypt');
 const base64 = require('base-64');
-const User = require('../models/index').db.User;
+const bcrypt = require('bcrypt');
+const Users = require('../models/index').User;
 
 const singUp = async (req, res) => {
     try {
-        const { username, fullName, email, password, phoneNumber, gender, birthDate, img, role } = req.body;
-        const hash = await bcrypt.hash(password, 10);
+        const { userName, fullName, email, password, phoneNumber, gender, birthDate, img, role } = req.body;
+        // const hash = await bcrypt.hash(password, 10);
         const data = {
-            username,
+            userName,
             fullName,
             email,
-            password: hash,
+            password,
             phoneNumber,
             gender,
             birthDate,
             img,
             role
         }
-        const user = await User.create(data);
+        const user = await Users.create(data);
         if (user) {
             res.status(201).json(user);
         }
@@ -31,8 +31,8 @@ const login = async (req, res) => {
     const basicHeader = req.headers.authorization.split(' ');
     const encodedString = basicHeader.pop();
     const decodedString = base64.decode(encodedString);
-    const [username, password] = decodedString.split(':');
-    const user = await User.findOne({ where: { username } });
+    const [userName, password] = decodedString.split(':');
+    const user = await Users.findOne({ where: { userName } });
 
     if (user) {
         const valid = await bcrypt.compare(password, user.password);
@@ -47,7 +47,7 @@ const login = async (req, res) => {
 }
 
 const allUsers = async (req, res) => {
-    const users = await User.findAll();
+    const users = await Users.findAll();
     res.status(200).json(users);
 }
 

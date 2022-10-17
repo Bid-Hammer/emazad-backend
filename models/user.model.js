@@ -1,6 +1,5 @@
 'use strict';
-
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
 module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define('User', {
@@ -32,7 +31,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.ENUM("male", "female"),
         },
         birthDate: {
-            type: DataTypes.DATEONLY,
+            // type: DataTypes.DATEONLY,
+            type: DataTypes.STRING,
             allowNull: false
         },
         img: {

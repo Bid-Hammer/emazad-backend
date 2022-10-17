@@ -1,18 +1,18 @@
 'use strict';
-const User = require('../models').db.User;
+const User = require('../models').User;
 
 const basicAuth = async (req, res, next) => {
 
     try {
-
-        const userName = await User.findOne({ where: { userName: req.params.userName } });
+        console.log(req.body);
+        const userName = await User.findOne({ where: { userName: req.body.userName } });
 
         if (userName) {
             return res.status(409).send('The Username alrady token');
 
         } else {
 
-            const email = await User.findOne({ where: { email: req.params.email } });
+            const email = await User.findOne({ where: { email: req.body.email } });
 
             if (email) {
 
