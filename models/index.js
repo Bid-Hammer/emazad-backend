@@ -1,7 +1,6 @@
 'use strict';
-
 const { Sequelize, DataTypes } = require('sequelize');
-const user = require('./user.model');
+// const user = require('./user.model');
 
 // const POSTGRES_URL = process.env.DATABASE_URL || process.env.LOCAL_DATABASE_URL
 // const sequelizeOption = {
@@ -14,8 +13,8 @@ const user = require('./user.model');
 // } 
 
 // for local testing 
-const POSTGRES_URL = 'postgresql://skokash:1094@localhost:5432/emazad';
-const sequelizeOption = { } 
+const POSTGRES_URL = 'postgres://localhost:5432/postgres';
+const sequelizeOption = {}
 
 let sequelize = new Sequelize(POSTGRES_URL, sequelizeOption);
 
@@ -27,6 +26,7 @@ let sequelize = new Sequelize(POSTGRES_URL, sequelizeOption);
 
 const db = {};
 db.sequelize = sequelize;
+db.User = require('./user.model')(sequelize, DataTypes);
 
 module.exports = db;
 
