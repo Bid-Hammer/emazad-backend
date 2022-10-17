@@ -13,7 +13,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 // } 
 
 // for local testing 
-const POSTGRES_URL = 'postgres://localhost:5432/postgres';
+const POSTGRES_URL = 'postgresql://skokash:1094@localhost:5432/emazad';
 const sequelizeOption = {}
 
 let sequelize = new Sequelize(POSTGRES_URL, sequelizeOption);
