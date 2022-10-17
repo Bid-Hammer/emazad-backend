@@ -1,22 +1,24 @@
 `use strict`;
+
 const base64 = require('base-64');
 const bcrypt = require('bcrypt');
 const Users = require('../models/index').User;
 
-const singUp = async (req, res) => {
+const signup = async (req, res) => {
     try {
-        const { userName, fullName, email, password, phoneNumber, gender, birthDate, img, role } = req.body;
-        // const hash = await bcrypt.hash(password, 10);
+        const { userName, fullName, email, password, phoneNumber, gender, birthDate, img, role, status } = req.body;
+
         const data = {
             userName,
             fullName,
             email,
-            password,
+            password: await bcrypt.hash(password, 10),
             phoneNumber,
             gender,
             birthDate,
             img,
-            role
+            role,
+            status
         }
         const user = await Users.create(data);
         if (user) {
@@ -31,13 +33,14 @@ const login = async (req, res) => {
     const basicHeader = req.headers.authorization.split(' ');
     const encodedString = basicHeader.pop();
     const decodedString = base64.decode(encodedString);
-    const [userName, password] = decodedString.split(':');
-    const user = await Users.findOne({ where: { userName } });
+    const [email, password] = decodedString.split(':');
+    const user = await Users.findOne({ where: { email: email } });
 
     if (user) {
         const valid = await bcrypt.compare(password, user.password);
-        if (valid) {
+        if (valid && user.status !== "blocked") {
             res.status(200).json(user);
+            console.log(`you are ${user.status}`)
         } else {
             res.status(403).send('Invalid Login');
         }
@@ -53,7 +56,7 @@ const allUsers = async (req, res) => {
 
 
 module.exports = {
-    singUp,
+    signup,
     login,
     allUsers
 };
