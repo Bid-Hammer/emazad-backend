@@ -4,8 +4,8 @@
   "description": "Auction Web Application Backend",
   "main": "index.js",
   "scripts": {
-    "test": "jest --verbose --coverage --watchAll",
     "start": "node index.js",
+    "test": "jest --verbose --coverage --watchAll",
     "dev": "nodemon index.js"
   },
   "repository": {
