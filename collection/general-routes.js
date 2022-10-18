@@ -41,15 +41,78 @@ class GeneralRoutes {
     }
   }
 
-  // async itemWithNotification(notification) {
-  //   try {
-  //     return await this.model.findAll({
-  //       include: notification,
-  //     });
-  //   } catch (err) {
-  //     console.log("Error in GeneralRoutes.itemWithNotification: ", err.message);
-  //   }
-  // }
+  async hide(id) {
+    try {
+      return await this.model.update(
+        { status: "deleted" },
+        { where: { id: id } }
+      );
+    } catch (err) {
+      console.log("Error in GeneralRoutes.delete: ", err.message);
+    }
+  }
+
+  async itemWithAllInfo(comments, bids, users, favorite, rating) {
+    try {
+      const excludedAttributes = [
+        "password",
+        "email",
+        "role",
+        "createdAt",
+        "updatedAt",
+        "token",
+      ];
+
+      return await this.model.findAll({
+        where: { status: "standBy" || "active" },
+        include: [
+          {
+            model: users,
+
+            attributes: {
+              exclude: excludedAttributes,
+            },
+            include: [rating],
+          },
+          {
+            model: comments,
+            include: [
+              {
+                model: users,
+                attributes: {
+                  exclude: excludedAttributes,
+                },
+              },
+            ],
+          },
+          {
+            model: bids,
+            include: [
+              {
+                model: users,
+                attributes: {
+                  exclude: excludedAttributes,
+                },
+              },
+            ],
+          },
+          {
+            model: favorite,
+            include: [
+              {
+                model: users,
+                attributes: {
+                  exclude: excludedAttributes,
+                },
+              },
+            ],
+          },
+        ],
+      });
+    } catch (err) {
+      console.log("Error in GeneralRoutes.itemWithAll: ", err.message);
+    }
+  }
 }
 
 module.exports = GeneralRoutes;

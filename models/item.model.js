@@ -1,20 +1,21 @@
-'use strict';
+"use strict";
 
 module.exports = (sequelize, DataTypes) => {
-
-  const Item = sequelize.define('Item', {
+  const Item = sequelize.define("Item", {
     itemTitle: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     itemDescription: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     itemImage: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
-      defaultValue: 'https://www.mub.eps.manchester.ac.uk/ceasblog/wp-content/themes/uom-theme/assets/images/default-thumbnail.jpg'
+      defaultValue: [
+        "https://www.mub.eps.manchester.ac.uk/ceasblog/wp-content/themes/uom-theme/assets/images/default-thumbnail.jpg",
+      ],
     },
     itemCat: {
       type: DataTypes.STRING,
@@ -45,8 +46,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE, //not sure
       allowNull: false,
     },
-
-  })
+    status: {
+      type: DataTypes.ENUM("standBy", "active", "sold", "expired", "deleted"),
+      allowNull: false,
+      defaultValue: "standBy",
+    },
+  });
 
   return Item;
-}
+};
