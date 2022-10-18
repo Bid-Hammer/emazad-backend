@@ -1,21 +1,51 @@
 "use strict";
 const express = require("express");
 const router = express.Router();
-const { Item } = require("../models");
-// const { notificationModel } = require("../models");
+const {
+  Item,
+  commentModel,
+  userModel,
+  bidModel,
+  favoriteModel,
+  ratingModel,
+} = require("../models/index");
+
 const uploadItemImg = require("../middlewares/upload-itemImg");
 const fs = require("fs");
 
 // Routes:
 
-router.get("/items", getAllItems); // to the items in the database
-router.get("/items/:id", getItem); // to get one item with the id
-router.post("/item", uploadItemImg, addItem); // to add a new item to the list
-router.put("/item/:id", updateItem); // to update an item
-router.delete("/item/:id", deleteItem); // to delete an item from the list
-// router.get("/itemsnotif", getAllItemsWithNotifications); // to the items in the database
+router.get("/items", getAllItems); 
+router.get("/items/:id", getItem); 
+router.post("/item", uploadItemImg, addItem);
+router.put("/item/:id", updateItem); 
+router.delete("/item/:id", deleteItem);
+
+router.get("/allitem", getItemWithAllData);
+router.put("/itemhide/:id", hideItem);
 
 // Functions:
+
+async function hideItem(req, res) {
+  const id = req.params.id;
+  const item = await Item.hide(id);
+  res.status(200).json(item);
+}
+
+async function getItemWithAllData(req, res) {
+  try {
+    const item = await Item.itemWithAllInfo(
+      commentModel,
+      bidModel,
+      userModel,
+      favoriteModel,
+      ratingModel
+    );
+    res.status(200).json(item);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
 
 async function getAllItems(req, res) {
   let item = await Item.read();
@@ -31,7 +61,10 @@ async function getItem(req, res) {
 }
 
 async function addItem(req, res) {
-  const dataBody = { ...req.body, itemImage: req.files.map(file => file.path) }
+  const dataBody = {
+    ...req.body,
+    itemImage: req.files.map((file) => file.path),
+  };
   const item = await Item.create(dataBody);
   res.status(201).json(item);
 }
@@ -46,22 +79,14 @@ async function updateItem(req, res) {
 
 async function deleteItem(req, res) {
   const id = req.params.id;
-  // console.log(id);
   const itemDeleted = await Item.read(id);
 
   itemDeleted.itemImage.map((path) => {
-    fs.unlinkSync(path)
+    fs.unlinkSync(path);
   });
 
   let deletedItem = await Item.delete(id);
   res.status(204).json({ deletedItem });
 }
-
-// async function getAllItemsWithNotifications(req, res) {
-//   let item = await Item.itemWithNotification(notificationModel);
-//   res.status(200).json({
-//     item,
-//   });
-// }
 
 module.exports = router;
