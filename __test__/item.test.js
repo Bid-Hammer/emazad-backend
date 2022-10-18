@@ -31,9 +31,9 @@ it('It can get an item by id', async () => {
     expect(response.status).toEqual(200);
 });
 
-it('It can delete an item by id', async () => {
-    const response = await request.delete('/items/1');
-    expect(response.status).toEqual(200);
-});
+// it('It can delete an item by id', async () => {
+//     const response = await request.delete('/items/1');
+//     expect(response.status).toEqual(200);
+// });
 
 });
