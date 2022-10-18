@@ -17,7 +17,8 @@ const collection = require("../collection/general-routes");
 
 // const POSTGRES_URL = 'postgres://odat:0000@localhost:5432/postgres';
 
-const POSTGRES_URL = "postgresql://skokash:1094@localhost:5432/emazad";
+const POSTGRES_URL = "postgres://localhost:5432/postgres";
+
 
 
 const sequelizeOption = {};

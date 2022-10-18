@@ -24,7 +24,7 @@ const uploadItemImg = multer({
         }
         cb('giv proper files formate to upload');
     }
-}).array('itemImage', 4);
+}).array('itemImage', 8);
 
 
 
