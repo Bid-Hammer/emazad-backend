@@ -48,83 +48,13 @@ async function deleteItem(req, res) {
   const id = req.params.id;
   // console.log(id);
   const itemDeleted = await Item.read(id);
-  console.log(itemDeleted.itemImage);
-  // delete image useing fs 
-  // itemDeleted.itemImage.forEach(image => {
-  //   fs.unlink(image, (err) => {
-  //     if (err) {
-  //       console.error(err)
-  //       return
-  //     }
-  //   })
-  // });
 
+  itemDeleted.itemImage.map((path) => {
+    fs.unlinkSync(path)
+  });
 
-  // console.log(itemDeleted.itemImage);
-  // delete images form the server
-  // Object.entries(itemDeleted.itemImage).forEach((image) => {
-  //   console.log(image);
-  // fn.unlink(image, (err) => {
-  //   if (err) {
-  //     console.error(err)
-  //     return
-  //   }
-  // })
-
-  // itemDeleted.itemImage.map(Image => {
-  //   console.log(Image);
-  //   fs.unlink(Image, (err) => {
-  //     if (err) {
-  //       console.error(err)
-  //       return
-  //     }
-  //   })
-  // })
-
-  let path = [];
-  let pathChar = [];
-  // for (const Image of itemDeleted.itemImage) {
-  //   // console.log(Image);
-  //   if (Image === '{' || Image === '}' || Image === '"') {
-  //     continue;
-  //   } else if (Image === ',') {
-  //     console.log(path);
-  //     // fs.unlink(path.join(''));
-  //     // fs.unlinkSync(path.join(''));
-  //     path.push(pathChar.join(''));
-  //     // pathChar = [];
-  //     continue;
-  //   } else {
-  //     pathChar.push(Image);
-  //   }
-  // }
-
-  // console.log(path);
-
-
-  Object.values(itemDeleted.itemImage).forEach((image) => {
-    if (image === '{' || image === '}' || image === '"') {
-
-    } else if (image === ',') {
-      console.log(path);
-      // fs.unlink(path.join(''));
-      fs.unlinkSync(path.join(''));
-      // path.push(pathChar.join(''));
-      path = [];
-
-    } else {
-      path.push(image);
-    }
-  })
-
-
-
-
-
-
-
-  // let deletedItem = await Item.delete(id);
-  // res.status(204).json({ deletedItem });
+  let deletedItem = await Item.delete(id);
+  res.status(204).json({ deletedItem });
 }
 
 // async function getAllItemsWithNotifications(req, res) {
