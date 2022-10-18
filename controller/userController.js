@@ -2,36 +2,21 @@
 
 const base64 = require("base-64");
 const bcrypt = require("bcrypt");
-const Users = require("../models/index").userModel;
+// const userModel = require("../models/index").userModel;
+
+const {
+    itemModel,
+    commentModel,
+    userModel,
+    bidModel,
+    favoriteModel,
+    ratingModel,
+  } = require("../models/index");
 
 const signup = async (req, res) => {
     try {
-        const {
-            userName,
-            fullName,
-            email,
-            password,
-            phoneNumber,
-            gender,
-            birthDate,
-            image,
-            role,
-            status,
-        } = req.body;
-
-        const data = {
-            userName,
-            fullName,
-            email,
-            password: await bcrypt.hash(password, 10),
-            phoneNumber,
-            gender,
-            birthDate,
-            image: req.file.path,
-            role,
-            status,
-        };
-        const user = await Users.create(data);
+        const data = { ...req.body, image: req.file.path, password: await bcrypt.hash(req.body.password, 10) };
+        const user = await userModel.create(data);
         if (user) {
             res.status(201).json(user);
         }
@@ -45,7 +30,7 @@ const login = async (req, res) => {
     const encodedString = basicHeader.pop();
     const decodedString = base64.decode(encodedString);
     const [email, password] = decodedString.split(":");
-    const user = await Users.findOne({ where: { email: email } });
+    const user = await userModel.findOne({ where: { email: email } });
 
     if (user) {
         const valid = await bcrypt.compare(password, user.password);
@@ -61,12 +46,28 @@ const login = async (req, res) => {
 };
 
 const allUsers = async (req, res) => {
-    const users = await Users.findAll();
-    res.status(200).json(users);
+    const userModel = await userModel.findAll();
+    res.status(200).json(userModel);
+};
+
+const getUserProfile = async (req, res) => {
+    const id = req.params.id;
+    const user = await userModel.findOne({ where: { id: id }, include: [itemModel, commentModel, bidModel, favoriteModel, ratingModel] });
+    res.status(200).json( {user} );
+};
+
+const updateUserProfile = async (req, res) => {
+    const id = req.params.id;
+    const obj = req.body;
+    const updatedUser = await userModel.findOne({ where: { id: id } });
+    const updated = await updatedUser.update(obj);
+    res.status(202).json(updated);
 };
 
 module.exports = {
     signup,
     login,
     allUsers,
+    getUserProfile,
+    updateUserProfile,
 };

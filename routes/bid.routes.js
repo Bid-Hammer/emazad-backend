@@ -5,6 +5,8 @@ const router = express.Router();
 
 const { Bid } = require("../models");
 
+const notificationRouter = require("./notification.routes");
+
 router.get("/bid", getBid);
 router.get("/bid/:id", getOneBid);
 router.post("/bid", createBid);
@@ -22,8 +24,17 @@ async function getOneBid(req, res) {
   res.status(200).json({ getOneBid });
 }
 
+// create a function to create a notification when a bid is created
+
+async function createNotification(req, res) {
+  let newNotification = req.body;
+  let notification = await Notification.create(newNotification);
+  res.status(201).json(notification);
+}
+
 async function createBid(req, res) {
   let newBid = req.body;
+  createNotification(req, res);
   let bid = await Bid.create(newBid);
   res.status(201).json(bid);
 }
@@ -34,5 +45,7 @@ async function createBid(req, res) {
 //   let deletedBid = await Bid.delete(id);
 //   res.status(204).send("deleted ");
 // }
+
+
 
 module.exports = router;
