@@ -3,7 +3,7 @@ const { Sequelize, DataTypes } = require("sequelize");
 const collection = require("../collection/general-routes");
 
 // const user = require('./user.model');
-// const POSTGRES_URL = process.env.DATABASE_URL || process.env.LOCAL_DATABASE_URL;
+const POSTGRES_URL = process.env.DATABASE_URL || process.env.LOCAL_DATABASE_URL;
 // const sequelizeOption = {
 //     dialectOptions: {
 //         ssl: {
@@ -15,7 +15,7 @@ const collection = require("../collection/general-routes");
 
 // for local testing
 
- const POSTGRES_URL = 'postgres://odat:0000@localhost:5432/postgres';
+//  const POSTGRES_URL = 'postgres://odat:0000@localhost:5432/postgres';
 
 // const POSTGRES_URL = "postgres://localhost:5432/postgres";
 
