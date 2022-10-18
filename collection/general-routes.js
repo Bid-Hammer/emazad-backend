@@ -113,6 +113,49 @@ class GeneralRoutes {
       console.log("Error in GeneralRoutes.itemWithAll: ", err.message);
     }
   }
+
+  async favoriteList(users, items) {
+    try {
+      const excludedAttributes = [
+        "password",
+        "email",
+        "role",
+        "createdAt",
+        "updatedAt",
+        "token",
+      ];
+
+      return await this.model.findAll({
+        include: [
+          {
+            model: users,
+            attributes: {
+              exclude: excludedAttributes,
+            },
+          },
+          {
+            model: items,
+            include : [
+              {
+                model: users,
+                attributes: {
+                  exclude: excludedAttributes,
+                },
+
+              }
+            ]
+          },
+        ],
+      });
+    } catch (err) {
+      console.log("Error in GeneralRoutes.favoriteList: ", err.message);
+    }
+
+  }
+
 }
+
+
+
 
 module.exports = GeneralRoutes;

@@ -8,7 +8,7 @@ const { Bid } = require("../models");
 router.get("/bid", getBid);
 router.get("/bid/:id", getOneBid);
 router.post("/bid", createBid);
-router.delete("/bid/:id", deleteBid);
+// router.delete("/bid/:id", deleteBid);
 
 async function getBid(req, res) {
   let bid = await Bid.read();
@@ -28,11 +28,11 @@ async function createBid(req, res) {
   res.status(201).json(bid);
 }
 
-async function deleteBid(req, res) {
-  const id = req.params.id;
+// async function deleteBid(req, res) {
+//   const id = req.params.id;
 
-  let deletedBid = await Bid.delete(id);
-  res.status(204).send("deleted ");
-}
+//   let deletedBid = await Bid.delete(id);
+//   res.status(204).send("deleted ");
+// }
 
 module.exports = router;

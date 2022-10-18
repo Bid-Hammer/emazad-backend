@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       ],
     },
     itemCat: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM("Electronics", "Clothes", "Real Estate", "Pets", "Vehicles", "Others"),
       allowNull: false,
     },
 
@@ -38,12 +38,12 @@ module.exports = (sequelize, DataTypes) => {
     },
 
     startDate: {
-      type: DataTypes.DATE, //not sure
+      type: DataTypes.DATE, 
       allowNull: false,
     },
 
     endDate: {
-      type: DataTypes.DATE, //not sure
+      type: DataTypes.DATE,
       allowNull: false,
     },
     status: {
