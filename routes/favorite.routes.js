@@ -3,12 +3,12 @@
 const express = require("express");
 const router = express.Router();
 
-const { Favorite } = require("../models");
+const { Favorite, userModel, itemModel } = require("../models");
 
 router.get("/favorite", getFavorites);
 router.get("/favorite/:id", getFavoriteById);
+router.get("/favoritelist", getFavoriteList);
 router.post("/favorite", createFavorite);
-router.put("/favorite/:id", updateFavorite);
 router.delete("/favorite/:id", deleteFavorite);
 
 async function getFavorites(req, res) {
@@ -39,16 +39,6 @@ async function createFavorite(req, res) {
   }
 }
 
-async function updateFavorite(req, res) {
-  try {
-    const id = req.params.id;
-    const favorite = await Favorite.update(id, req.body);
-    res.status(202).json(favorite);
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
-}
-
 async function deleteFavorite(req, res) {
   try {
     const id = req.params.id;
@@ -58,5 +48,16 @@ async function deleteFavorite(req, res) {
     res.status(500).json(err.message);
   }
 }
+
+
+async function getFavoriteList(req, res) {
+  try {
+    const favorites = await Favorite.favoriteList(userModel, itemModel);
+    res.status(200).json(favorites);
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
+}
+
 
 module.exports = router;

@@ -15,9 +15,9 @@ const collection = require("../collection/general-routes");
 
 // for local testing
 
-// const POSTGRES_URL = 'postgres://odat:0000@localhost:5432/postgres';
+ const POSTGRES_URL = 'postgres://odat:0000@localhost:5432/postgres';
 
-const POSTGRES_URL = "postgres://localhost:5432/postgres";
+// const POSTGRES_URL = "postgres://localhost:5432/postgres";
 
 
 
