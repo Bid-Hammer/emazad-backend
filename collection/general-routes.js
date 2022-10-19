@@ -151,6 +151,7 @@ class GeneralRoutes {
     }
   }
 
+
   async readNotification(id) {
     try {
       if (id) {

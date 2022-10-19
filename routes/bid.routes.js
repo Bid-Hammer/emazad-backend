@@ -22,9 +22,15 @@ async function getBid(req, res) {
 
 async function getOneBid(req, res) {
   const id = req.params.id;
-
   let getOneBid = await Bid.read(id);
   res.status(200).json({ getOneBid });
+}
+
+
+async function createNotification(req, res) {
+  let newNotification = req.body;
+  // let notification = await Notification.create(newNotification);
+  res.status(201).json(newNotification);
 }
 
 async function createBid(req, res) {

@@ -64,10 +64,29 @@ const updateUserProfile = async (req, res) => {
     res.status(202).json(updated);
 };
 
+const soldItems = async (req, res) => {
+    const id = req.params.id;
+    const user = await userModel.findOne({ where: { id: id }, include: [itemModel] });
+    const items = user.Items;
+    const soldItems = items.filter((item) => item.status === "sold" || item.status === "expired");
+    res.status(200).json(soldItems);
+};
+
+// create a function where the user is the last person to make a bid on an item
+const wonItems = async (req, res) => {
+    const id = req.params.id;
+    const user = await itemModel.findAll({ where: { userID: id }, include: { model: bidModel, include: userModel } });
+        
+    res.status(200).json(user);
+    };
+
+
 module.exports = {
     signup,
     login,
     allUsers,
     getUserProfile,
     updateUserProfile,
+    soldItems,
+    wonItems,
 };
