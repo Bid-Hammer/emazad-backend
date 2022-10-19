@@ -2,9 +2,7 @@
 
 const express = require("express");
 const router = express.Router();
-
 const Sequelize = require("sequelize");
-
 const { Bid } = require("../models");
 const { Notification } = require("../models");
 const { itemModel, userModel } = require("../models");

@@ -11,7 +11,7 @@ const {
     bidModel,
     favoriteModel,
     ratingModel,
-  } = require("../models/index");
+} = require("../models/index");
 
 const signup = async (req, res) => {
     try {
@@ -53,7 +53,7 @@ const allUsers = async (req, res) => {
 const getUserProfile = async (req, res) => {
     const id = req.params.id;
     const user = await userModel.findOne({ where: { id: id }, include: [itemModel, commentModel, bidModel, favoriteModel, ratingModel] });
-    res.status(200).json( {user} );
+    res.status(200).json({ user });
 };
 
 const updateUserProfile = async (req, res) => {
@@ -72,13 +72,36 @@ const soldItems = async (req, res) => {
     res.status(200).json(soldItems);
 };
 
-// create a function where the user is the last person to make a bid on an item
+
+
 const wonItems = async (req, res) => {
     const id = req.params.id;
-    const user = await itemModel.findAll({ where: { userID: id }, include: { model: bidModel, include: userModel } });
-        
-    res.status(200).json(user);
-    };
+    const user = await itemModel.findAll({ include: { model: bidModel, include: userModel } });
+
+    const wonItems = user.filter((item) => item.Bids.length > 0 && item.Bids[item.Bids.length - 1].dataValues.userID === Number(id) && (item.status === "sold" || item.status === "expired"));
+
+    res.status(200).json(wonItems);
+
+};
+
+
+
+const userEngagedItems = async (req, res) => {
+
+    const id = req.params.id;
+    const user = await itemModel.findAll({ include: { model: bidModel, include: userModel } });
+
+    const engagedItems = user.filter((item) => {
+        if (item.Bids.length > 0 && item.status === "active") {
+            const bids = item.Bids.map((bid) => bid.dataValues.userID);
+            if (bids.includes(Number(id))) {
+                return item;
+            }
+        }
+    });
+
+    res.status(200).json(engagedItems);
+}
 
 
 module.exports = {
@@ -89,4 +112,5 @@ module.exports = {
     updateUserProfile,
     soldItems,
     wonItems,
+    userEngagedItems,
 };
