@@ -1,5 +1,5 @@
-# emazad-backend
-Auction Web Application Backend
+# eMazad-Backend
+Auction Web Application Backend built using JavaScript, Node JS, Express JS, Sequelize, PostgresSQL, and Socket.io.
 
 # Group Members
 - Ahmad Jubran
