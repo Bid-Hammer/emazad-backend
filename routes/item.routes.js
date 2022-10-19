@@ -15,10 +15,10 @@ const fs = require("fs");
 
 // Routes:
 
-router.get("/items", getAllItems); 
-router.get("/items/:id", getItem); 
+router.get("/item", getAllItems);
+router.get("/item/:id", getItem);
 router.post("/item", uploadItemImg, addItem);
-router.put("/item/:id", uploadItemImg, updateItem); 
+router.put("/item/:id", uploadItemImg, updateItem);
 router.delete("/item/:id", deleteItem);
 
 router.get("/allitem", getItemWithAllData);

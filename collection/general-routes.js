@@ -52,6 +52,8 @@ class GeneralRoutes {
     }
   }
 
+
+
   async itemWithAllInfo(comments, bids, users, favorite, rating) {
     try {
       const excludedAttributes = [
