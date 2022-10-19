@@ -52,6 +52,7 @@ class GeneralRoutes {
     }
   }
 
+
   async itemWithAllInfo(comments, bids, users, favorite, rating) {
     try {
       const excludedAttributes = [
@@ -211,6 +212,18 @@ class GeneralRoutes {
       console.log("Error in GeneralRoutes.averageRating: ", err.message);
     }
   }
+  
+
+  // create a function to find all favorites for a specific user 
+  async userFavorites(id, items) {
+    try {
+      return await this.model.findAll({ where: { userID: id }, include: [items] });
+    } catch (err) {
+      console.log("Error in GeneralRoutes.getFavorites: ", err.message);
+    }
+  }
+
+
 }
 
 module.exports = GeneralRoutes;

@@ -21,9 +21,6 @@ module.exports = (sequelize, DataTypes) => {
     reportID: {
       type: DataTypes.INTEGER,
     },
-    favoriteID: {
-      type: DataTypes.INTEGER,
-    },
     notiMessage: {
       type: DataTypes.STRING,
       allowNull: false,
