@@ -14,7 +14,7 @@ describe('Report Test', () => {
             "itemID": 1
         });
 
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(201);
         expect(response.body.reportTitle).toEqual("Report");
         expect(response.body.userID).toEqual(1);
         expect(response.body.itemID).toEqual(1);

@@ -135,29 +135,48 @@ class GeneralRoutes {
           },
           {
             model: items,
-            include : [
+            include: [
               {
                 model: users,
                 attributes: {
                   exclude: excludedAttributes,
                 },
-
-              }
-            ]
+              },
+            ],
           },
         ],
       });
     } catch (err) {
       console.log("Error in GeneralRoutes.favoriteList: ", err.message);
     }
-
   }
 
-  
 
+  async readNotification(id) {
+    try {
+      if (id) {
+        return await this.model.findOne({
+          where: { id: id } && { status: "unread" || "read" },
+        });
+      } else {
+        return await this.model.findAll({
+          where: { status: "unread" || "read" },
+        });
+      }
+    } catch (err) {
+      console.log("Error in GeneralRoutes.read: ", err.message);
+    }
+  }
+
+  async readUserNotifications(id) {
+    try {
+      return await this.model.findAll({
+        where: { userID: id } && { status: "unread" || "read" },
+      });
+    } catch (err) {
+      console.log("Error in GeneralRoutes.read: ", err.message);
+    }
+  }
 }
-
-
-
 
 module.exports = GeneralRoutes;
