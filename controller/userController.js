@@ -72,8 +72,6 @@ const soldItems = async (req, res) => {
     res.status(200).json(soldItems);
 };
 
-
-
 const wonItems = async (req, res) => {
     const id = req.params.id;
     const user = await itemModel.findAll({ include: { model: bidModel, include: userModel } });
@@ -83,8 +81,6 @@ const wonItems = async (req, res) => {
     res.status(200).json(wonItems);
 
 };
-
-
 
 const userEngagedItems = async (req, res) => {
 
@@ -102,7 +98,6 @@ const userEngagedItems = async (req, res) => {
 
     res.status(200).json(engagedItems);
 }
-
 
 module.exports = {
     signup,

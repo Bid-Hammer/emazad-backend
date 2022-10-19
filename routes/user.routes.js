@@ -14,7 +14,6 @@ const basicAuth = require('../middlewares/basic-auth');
 const uploadUserImg = require('../middlewares/upload-userImg');
 
 
-
 router.post('/signup', uploadUserImg, basicAuth, signup);
 router.post('/login', login);
 router.get('/users', bearerAuth, allUsers);

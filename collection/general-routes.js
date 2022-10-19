@@ -51,9 +51,7 @@ class GeneralRoutes {
       console.log("Error in GeneralRoutes.delete: ", err.message);
     }
   }
-
-
-
+  
   async itemWithAllInfo(comments, bids, users, favorite, rating) {
     try {
       const excludedAttributes = [
