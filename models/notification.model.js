@@ -28,6 +28,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    status: {
+      type: DataTypes.ENUM("unread", "read", "deleted"),
+      allowNull: false,
+      defaultValue: "unread",
+    },
   });
   return Notification;
 };
