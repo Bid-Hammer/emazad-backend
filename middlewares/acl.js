@@ -9,7 +9,7 @@ const acl = (capability) => {
         next(`Access Denied for ${capability}`);
       }
     } catch (error) {
-      next("You Are not Allowed to do this");
+      next("You are not allowed to do this");
     }
   };
 };

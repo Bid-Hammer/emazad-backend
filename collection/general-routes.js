@@ -150,7 +150,6 @@ class GeneralRoutes {
     }
   }
 
-
   async readNotification(id) {
     try {
       if (id) {
@@ -170,14 +169,38 @@ class GeneralRoutes {
   async readUserNotifications(id) {
     try {
       return await this.model.findAll({
-        where: { userID: id } && { status: "unread" || "read" },
+        where: { userID: id, status: "unread" || "read" },
       });
     } catch (err) {
       console.log("Error in GeneralRoutes.read: ", err.message);
     }
   }
 
-  // create a function to find all ratings for a specific user and return the average rating
+  async createRating(obj) {
+    try {
+      const user = await this.model.findOne({
+        where: { id: obj.userID },
+      });
+      const ratedUser = await this.model.findOne({
+        where: { id: obj.ratedID },
+      });
+      if (user.id === ratedUser.id) {
+        return "You can't rate yourself";
+      } else {
+        const rating = await this.model.findOne({
+          where: { userID: obj.userID } && { ratedID: obj.ratedID },
+        });
+        if (rating) {
+          return "You can't rate more than once";
+        } else {
+          return await this.model.create(obj);
+        }
+      }
+    } catch (err) {
+      console.log("Error in GeneralRoutes.createRating: ", err.message);
+    }
+  }
+
   async getAverageRating(id) {
     try {
       const dataById = await this.model.findAll({ where: { ratedID: id } });
@@ -189,7 +212,7 @@ class GeneralRoutes {
       console.log("Error in GeneralRoutes.averageRating: ", err.message);
     }
   }
-
+  
 
   // create a function to find all favorites for a specific user 
   async userFavorites(id, items) {
@@ -199,7 +222,6 @@ class GeneralRoutes {
       console.log("Error in GeneralRoutes.getFavorites: ", err.message);
     }
   }
-
 
 
 }
