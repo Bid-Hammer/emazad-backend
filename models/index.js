@@ -82,6 +82,9 @@ db.ratingModel.belongsTo(db.userModel, {
     targetKey: "id",
 });
 
+db.userModel.hasMany(db.ratingModel, { foreignKey: "ratedID", sourceKey: "id" });
+db.ratingModel.belongsTo(db.userModel, { foreignKey: "ratedID", targetKey: "id" });
+
 db.userModel.hasMany(db.reportModel, { foreignKey: "userID", sourceKey: "id" });
 db.reportModel.belongsTo(db.userModel, {
     foreignKey: "userID",

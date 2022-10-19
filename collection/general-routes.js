@@ -52,6 +52,7 @@ class GeneralRoutes {
     }
   }
   
+
   async itemWithAllInfo(comments, bids, users, favorite, rating) {
     try {
       const excludedAttributes = [
@@ -62,13 +63,11 @@ class GeneralRoutes {
         "updatedAt",
         "token",
       ];
-
       return await this.model.findAll({
         where: { status: "standBy" || "active" },
         include: [
           {
             model: users,
-
             attributes: {
               exclude: excludedAttributes,
             },
@@ -177,6 +176,21 @@ class GeneralRoutes {
       console.log("Error in GeneralRoutes.read: ", err.message);
     }
   }
+
+  // create a function to find all ratings for a specific user and return the average rating
+  async getAverageRating(id) {
+    try {
+      const dataById = await this.model.findAll({ where: { ratedID: id } });
+      const averageRating = dataById.reduce((acc, curr) => {
+        return acc + curr.rating;
+      }, 0);
+      return averageRating / dataById.length;
+    } catch (err) {
+      console.log("Error in GeneralRoutes.averageRating: ", err.message);
+    }
+  }
+
+
 }
 
 module.exports = GeneralRoutes;

@@ -11,6 +11,8 @@ router.post("/rating", createRating);
 router.put("/rating/:id", updateRating);
 router.delete("/rating/:id", deleteRating);
 
+router.get("/userRating/:id", getUserRating);
+
 async function getRatings(req, res) {
   try {
     const ratings = await Rating.read();
@@ -54,6 +56,16 @@ async function deleteRating(req, res) {
     const id = req.params.id;
     const rating = await Rating.delete(id);
     res.status(204).json(rating);
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
+}
+
+async function getUserRating(req, res) {
+  try {
+    const id = req.params.id;
+    const rating = await Rating.getAverageRating(id);
+    res.status(200).json(rating);
   } catch (err) {
     res.status(500).json(err.message);
   }
