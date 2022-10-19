@@ -147,14 +147,14 @@ db.notificationModel.belongsTo(db.commentModel, {
     targetKey: "id",
 });
 
-db.favoriteModel.hasMany(db.notificationModel, {
-    foreignKey: "favoriteID",
-    sourceKey: "id",
-});
-db.notificationModel.belongsTo(db.favoriteModel, {
-    foreignKey: "favoriteID",
-    targetKey: "id",
-});
+// db.favoriteModel.hasMany(db.notificationModel, {
+//     foreignKey: "favoriteID",
+//     sourceKey: "id",
+// });
+// db.notificationModel.belongsTo(db.favoriteModel, {
+//     foreignKey: "favoriteID",
+//     targetKey: "id",
+// });
 
 db.ratingModel.hasMany(db.notificationModel, {
     foreignKey: "ratingID",

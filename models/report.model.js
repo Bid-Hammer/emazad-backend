@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = (sequelize, DataTypes) => {
-    
+
   const Report = sequelize.define("Report", {
     reportTitle: {
       type: DataTypes.STRING,
@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     reportReason: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM("Spam", "Inappropriate", "Scam", "Other"),
       allowNull: false,
     },
     userID: {
