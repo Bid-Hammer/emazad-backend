@@ -18,7 +18,7 @@ const fs = require("fs");
 router.get("/items", getAllItems); 
 router.get("/items/:id", getItem); 
 router.post("/item", uploadItemImg, addItem);
-router.put("/item/:id", updateItem); 
+router.put("/item/:id", uploadItemImg, updateItem); 
 router.delete("/item/:id", deleteItem);
 
 router.get("/allitem", getItemWithAllData);
@@ -88,5 +88,26 @@ async function deleteItem(req, res) {
   let deletedItem = await Item.delete(id);
   res.status(204).json({ deletedItem });
 }
+
+// update the item status to active when the startDate is less than the current date
+
+setInterval(async () => {
+  const currentDate = new Date();
+  const items = await Item.read();
+
+  items.map(async (item) => {
+    if (item.startDate < currentDate) {
+      await Item.update(item.id, { status: "active" });
+    }
+    if (item.endDate < currentDate) {
+      await Item.update(item.id, { status: "sold" });
+    }
+    if (item.endDate < currentDate - 2) {
+      await Item.update(item.id, { status: "expired" });
+    }
+  });
+
+}, 100000);
+
 
 module.exports = router;
