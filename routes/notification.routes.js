@@ -1,9 +1,8 @@
 "use strict";
-
 const express = require("express");
 const router = express.Router();
-
 const { Notification } = require("../models");
+const { Op } = require("sequelize");
 
 router.get("/notif", getNotifications);
 router.get("/notif/:id", getNotificationById);
@@ -11,6 +10,7 @@ router.get("/usernotif/:id", getUserNotifications);
 router.post("/notif", createNotification);
 router.put("/notif/:id", updateNotification);
 router.delete("/notif/:id", deleteNotification);
+
 
 async function getNotifications(req, res) {
   try {
@@ -21,25 +21,28 @@ async function getNotifications(req, res) {
   }
 }
 
+
 async function getNotificationById(req, res) {
   try {
     const id = req.params.id;
-    const notification = await Notification.readNotification(id);
+    const notification = await Notification.readNotification(id, Op);
     res.status(200).json(notification);
   } catch (err) {
     res.status(500).json(err.message);
   }
 }
 
+
 async function getUserNotifications(req, res) {
   try {
     const id = req.params.id;
-    const notifications = await Notification.readUserNotifications(id);
+    const notifications = await Notification.readUserNotifications(id, Op);
     res.status(200).json(notifications);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 }
+
 
 async function createNotification(req, res) {
   try {
@@ -49,6 +52,7 @@ async function createNotification(req, res) {
     res.status(500).json(err.message);
   }
 }
+
 
 async function updateNotification(req, res) {
   try {
@@ -60,6 +64,7 @@ async function updateNotification(req, res) {
   }
 }
 
+
 async function deleteNotification(req, res) {
   try {
     const id = req.params.id;
@@ -69,6 +74,7 @@ async function deleteNotification(req, res) {
     res.status(500).json(err.message);
   }
 }
+
 
 setInterval(async () => {
   try {
@@ -83,5 +89,6 @@ setInterval(async () => {
     console.log(err.message);
   }
 }, 1 * 24 * 60 * 60 * 1000);
+
 
 module.exports = router;

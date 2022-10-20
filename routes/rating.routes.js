@@ -1,8 +1,6 @@
 "use strict";
-
 const express = require("express");
 const router = express.Router();
-
 const {Rating} = require("../models");
 
 router.get("/rating", getRatings);
@@ -10,7 +8,6 @@ router.get("/rating/:id", getRatingById);
 router.post("/rating", createRating);
 router.put("/rating/:id", updateRating);
 router.delete("/rating/:id", deleteRating);
-
 router.get("/userRating/:id", getUserRating);
 
 async function getRatings(req, res) {

@@ -5,14 +5,14 @@ const supertest = require('supertest');
 const request = supertest(server.app);
 
 describe('Verify Bid get routs', () => {
-it('test to get all bids, should response with 200 status code ', async () => {
-    const response = await request.get('/bid');
-    expect(response.status).toBe(200);
-});
-it('test to get one bid, should response with 200 status code ', async () => {
-    const response = await request.get(`/bid/${1}`);
-    expect(response.status).toBe(200);
-});
+    it('test to get all bids, should response with 200 status code ', async () => {
+        const response = await request.get('/bid');
+        expect(response.status).toBe(200);
+    });
+    it('test to get one bid, should response with 200 status code ', async () => {
+        const response = await request.get(`/bid/${1}`);
+        expect(response.status).toBe(200);
+    });
 });
 describe('Bid Test', () => {
     // it('It can create a new user', async () => {
@@ -47,8 +47,8 @@ describe('Bid Test', () => {
             "userID": 1,
             "itemID": 1,
             "bidprice": 10
-           
+
         });
         expect(createBid.status).toBe(201);
     });
-    });
+});

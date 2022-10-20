@@ -1,5 +1,4 @@
 "use strict";
-
 const express = require("express");
 const router = express.Router();
 const Sequelize = require("sequelize");
@@ -12,6 +11,7 @@ router.get("/bid", getBid);
 router.get("/bid/:id", getOneBid);
 router.post("/bid", createBid);
 router.delete("/bid/:id", deleteBid);
+
 
 async function getBid(req, res) {
   let bid = await Bid.read();
@@ -39,6 +39,7 @@ async function createBid(req, res) {
     },
   });
 
+
   try {
     if (Number(obj.userID) !== Number(itemOne.userID)) {
       let bid = await Bid.create(obj);
@@ -52,7 +53,6 @@ async function createBid(req, res) {
           },
         ],
       });
-
       let users = item.Bids.map((bid) => bid.userID);
       let uniqueUsers = [...new Set(users)];
       let filteredUsers = uniqueUsers.filter(
@@ -85,6 +85,7 @@ async function createBid(req, res) {
     res.status(500).json({ message: error.message });
   }
 }
+
 
 async function deleteBid(req, res) {
   const id = req.params.id;

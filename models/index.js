@@ -31,6 +31,7 @@ let sequelize = new Sequelize(POSTGRES_URL, sequelizeOption);
 //     console.log(error)
 // });
 
+// create models for all schemas
 const db = {};
 db.sequelize = sequelize;
 db.userModel = require("./user.model")(sequelize, DataTypes);
@@ -41,6 +42,16 @@ db.favoriteModel = require("./favorite.model")(sequelize, DataTypes);
 db.notificationModel = require("./notification.model")(sequelize, DataTypes);
 db.ratingModel = require("./rating.model")(sequelize, DataTypes);
 db.reportModel = require("./report.model")(sequelize, DataTypes);
+
+// create collection for all models 
+db.Item = new collection(db.itemModel);
+db.Bid = new collection(db.bidModel);
+db.Comment = new collection(db.commentModel);
+db.Favorite = new collection(db.favoriteModel);
+db.Notification = new collection(db.notificationModel);
+db.Rating = new collection(db.ratingModel);
+db.Report = new collection(db.reportModel);
+
 
 // User Associations
 db.userModel.hasMany(db.itemModel, { foreignKey: "userID", sourceKey: "id" });
@@ -147,15 +158,6 @@ db.notificationModel.belongsTo(db.commentModel, {
     targetKey: "id",
 });
 
-// db.favoriteModel.hasMany(db.notificationModel, {
-//     foreignKey: "favoriteID",
-//     sourceKey: "id",
-// });
-// db.notificationModel.belongsTo(db.favoriteModel, {
-//     foreignKey: "favoriteID",
-//     targetKey: "id",
-// });
-
 db.ratingModel.hasMany(db.notificationModel, {
     foreignKey: "ratingID",
     sourceKey: "id",
@@ -174,12 +176,6 @@ db.notificationModel.belongsTo(db.reportModel, {
     targetKey: "id",
 });
 
-db.Item = new collection(db.itemModel);
-db.Bid = new collection(db.bidModel);
-db.Comment = new collection(db.commentModel);
-db.Favorite = new collection(db.favoriteModel);
-db.Notification = new collection(db.notificationModel);
-db.Rating = new collection(db.ratingModel);
-db.Report = new collection(db.reportModel);
+
 
 module.exports = db;

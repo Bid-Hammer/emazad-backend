@@ -1,36 +1,51 @@
 `use strict`;
-
 const base64 = require("base-64");
 const bcrypt = require("bcrypt");
-// const userModel = require("../models/index").userModel;
-
 const {
     itemModel,
     commentModel,
     userModel,
     bidModel,
     favoriteModel,
-    ratingModel,
+    ratingModel
 } = require("../models/index");
+
+const { Op } = require("sequelize");
+const fs = require("fs");
 
 const signup = async (req, res) => {
     try {
+
         const data = { ...req.body, image: req.file.path, password: await bcrypt.hash(req.body.password, 10) };
         const user = await userModel.create(data);
         if (user) {
             res.status(201).json(user);
+        } else {
+            // console.log(req.file.path);
+            fs.unlinkSync(req.file.path);
         }
     } catch (error) {
-        console.log(error);
+        fs.unlinkSync(req.file.path);
+        res.status(500).send(error.message);
     }
-};
+}
+
+
 
 const login = async (req, res) => {
     const basicHeader = req.headers.authorization.split(" ");
     const encodedString = basicHeader.pop();
     const decodedString = base64.decode(encodedString);
     const [email, password] = decodedString.split(":");
-    const user = await userModel.findOne({ where: { email: email } });
+    // check the user name or email or phone number is exists
+
+
+    const user = await userModel.findOne({
+        where: {
+            [Op.or]: [{ email: email }, { userName: email }, { phoneNumber: email }]
+        },
+    });
+    // const user = await userModel.findOne();
 
     if (user) {
         const valid = await bcrypt.compare(password, user.password);
@@ -45,10 +60,16 @@ const login = async (req, res) => {
     }
 };
 
+
+
+
 const allUsers = async (req, res) => {
     const userModel = await userModel.findAll();
     res.status(200).json(userModel);
 };
+
+
+
 
 const getUserProfile = async (req, res) => {
     const id = req.params.id;
@@ -56,13 +77,22 @@ const getUserProfile = async (req, res) => {
     res.status(200).json({ user });
 };
 
+
+
+
 const updateUserProfile = async (req, res) => {
     const id = req.params.id;
     const obj = req.body;
     const updatedUser = await userModel.findOne({ where: { id: id } });
+    if (updatedUser.image !== obj.image) {
+        fs.unlinkSync(updatedUser.image);
+    }
     const updated = await updatedUser.update(obj);
     res.status(202).json(updated);
 };
+
+
+
 
 const soldItems = async (req, res) => {
     const id = req.params.id;
@@ -71,6 +101,8 @@ const soldItems = async (req, res) => {
     const soldItems = items.filter((item) => item.status === "sold" || item.status === "expired");
     res.status(200).json(soldItems);
 };
+
+
 
 const wonItems = async (req, res) => {
     const id = req.params.id;
@@ -81,6 +113,8 @@ const wonItems = async (req, res) => {
     res.status(200).json(wonItems);
 
 };
+
+
 
 const userEngagedItems = async (req, res) => {
 
@@ -98,6 +132,7 @@ const userEngagedItems = async (req, res) => {
 
     res.status(200).json(engagedItems);
 }
+
 
 module.exports = {
     signup,
