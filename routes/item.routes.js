@@ -9,7 +9,7 @@ const {
   favoriteModel,
   ratingModel,
 } = require("../models/index");
-
+const { Op } = require("sequelize");
 const uploadItemImg = require("../middlewares/upload-itemImg");
 const fs = require("fs");
 
@@ -39,7 +39,8 @@ async function getItemWithAllData(req, res) {
       bidModel,
       userModel,
       favoriteModel,
-      ratingModel
+      ratingModel,
+      Op
     );
     res.status(200).json(item);
   } catch (err) {
@@ -61,12 +62,19 @@ async function getItem(req, res) {
 }
 
 async function addItem(req, res) {
-  const dataBody = {
-    ...req.body,
-    itemImage: req.files.map((file) => file.path),
-  };
-  const item = await Item.create(dataBody);
-  res.status(201).json(item);
+  try {
+    const dataBody = {
+      ...req.body,
+      itemImage: req.files.map((file) => file.path),
+    };
+    const item = await Item.createItem(dataBody, fs);
+    res.status(201).json(item);
+  } catch (err) {
+    console.log(req.files)
+    req.files.map((file) => fs.unlinkSync(file.path));
+    res.status(500).json({ message: err.message })
+  }
+
 }
 
 async function updateItem(req, res) {
@@ -89,8 +97,8 @@ async function deleteItem(req, res) {
   res.status(204).json({ deletedItem });
 }
 
-// update the item status to active when the startDate is less than the current date
 
+// update the item status to active when the startDate is less than the current date
 setInterval(async () => {
   const currentDate = new Date();
   const items = await Item.read();

@@ -1,4 +1,6 @@
 "use strict";
+const { Op } = require("sequelize");
+
 class GeneralRoutes {
   constructor(model) {
     this.model = model;
@@ -53,7 +55,7 @@ class GeneralRoutes {
   }
 
 
-  async itemWithAllInfo(comments, bids, users, favorite, rating) {
+  async itemWithAllInfo(comments, bids, users, favorite, rating, Op) {
     try {
       const excludedAttributes = [
         "password",
@@ -64,7 +66,9 @@ class GeneralRoutes {
         "token",
       ];
       return await this.model.findAll({
-        where: { status: "standBy" || "active" },
+        where: {
+          [Op.or]: [{ status: "active" }, { status: "standBy" }]
+        },
         include: [
           {
             model: users,
@@ -150,15 +154,17 @@ class GeneralRoutes {
     }
   }
 
-  async readNotification(id) {
+
+  async readNotification(id, Op) {
+
     try {
       if (id) {
         return await this.model.findOne({
-          where: { id: id } && { status: "unread" || "read" },
+          where: { [Op.and]: [{ id: id }, { [Op.or]: [{ status: "unread" }, { status: "read" }] }] },
         });
       } else {
         return await this.model.findAll({
-          where: { status: "unread" || "read" },
+          where: { [Op.or]: [{ status: "unread" }, { status: "read" }] },
         });
       }
     } catch (err) {
@@ -166,15 +172,17 @@ class GeneralRoutes {
     }
   }
 
-  async readUserNotifications(id) {
+  
+  async readUserNotifications(id, Op) {
     try {
       return await this.model.findAll({
-        where: { userID: id, status: "unread" || "read" },
+        where: { [Op.and]: [{ userID: id }, { [Op.or]: [{ status: "unread" }, { status: "read" }] }] },
       });
     } catch (err) {
       console.log("Error in GeneralRoutes.read: ", err.message);
     }
   }
+
 
   async createRating(obj) {
     try {
@@ -212,7 +220,7 @@ class GeneralRoutes {
       console.log("Error in GeneralRoutes.averageRating: ", err.message);
     }
   }
-  
+
 
   // create a function to find all favorites for a specific user 
   async userFavorites(id, items) {
@@ -224,6 +232,16 @@ class GeneralRoutes {
   }
 
 
+
+
+  async createItem(obj, fs) {
+    try {
+      return await this.model.create(obj);
+    } catch (err) {
+      obj.itemImage.map((file) => fs.unlinkSync(file));
+      console.log("Error in GeneralRoutes.createItem: ", err.message);
+    }
+  }
 }
 
 module.exports = GeneralRoutes;

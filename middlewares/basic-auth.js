@@ -1,5 +1,6 @@
 'use strict';
 const User = require('../models').userModel;
+const fs = require('fs');
 
 const basicAuth = async (req, res, next) => {
 
@@ -8,6 +9,7 @@ const basicAuth = async (req, res, next) => {
         const userName = await User.findOne({ where: { userName: req.body.userName } });
 
         if (userName) {
+            fs.unlinkSync(req.file.path);
             return res.status(409).send('Username already exists');
 
         } else {
@@ -16,7 +18,14 @@ const basicAuth = async (req, res, next) => {
 
             if (email) {
 
+                fs.unlinkSync(req.file.path);
                 return res.status(409).send('Email already exists');
+            }
+
+            const phoneNumber = await User.findOne({ where: { phoneNumber: req.body.phoneNumber } });
+            if (phoneNumber) {
+                fs.unlinkSync(req.file.path);
+                return res.status(409).send('Phone number already exists');
             }
         }
         next();
