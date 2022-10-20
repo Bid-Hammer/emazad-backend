@@ -156,6 +156,7 @@ class GeneralRoutes {
 
 
   async readNotification(id, Op) {
+
     try {
       if (id) {
         return await this.model.findOne({
@@ -171,6 +172,7 @@ class GeneralRoutes {
     }
   }
 
+  
   async readUserNotifications(id, Op) {
     try {
       return await this.model.findAll({
@@ -181,7 +183,32 @@ class GeneralRoutes {
     }
   }
 
-  // create a function to find all ratings for a specific user and return the average rating
+
+  async createRating(obj) {
+    try {
+      const user = await this.model.findOne({
+        where: { id: obj.userID },
+      });
+      const ratedUser = await this.model.findOne({
+        where: { id: obj.ratedID },
+      });
+      if (user.id === ratedUser.id) {
+        return "You can't rate yourself";
+      } else {
+        const rating = await this.model.findOne({
+          where: { userID: obj.userID } && { ratedID: obj.ratedID },
+        });
+        if (rating) {
+          return "You can't rate more than once";
+        } else {
+          return await this.model.create(obj);
+        }
+      }
+    } catch (err) {
+      console.log("Error in GeneralRoutes.createRating: ", err.message);
+    }
+  }
+
   async getAverageRating(id) {
     try {
       const dataById = await this.model.findAll({ where: { ratedID: id } });
@@ -206,6 +233,7 @@ class GeneralRoutes {
 
 
 
+
   async createItem(obj, fs) {
     try {
       return await this.model.create(obj);
@@ -214,7 +242,6 @@ class GeneralRoutes {
       console.log("Error in GeneralRoutes.createItem: ", err.message);
     }
   }
-
 }
 
 module.exports = GeneralRoutes;

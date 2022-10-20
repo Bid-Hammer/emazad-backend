@@ -1,7 +1,7 @@
 "use strict";
 const express = require("express");
 const router = express.Router();
-const {Rating} = require("../models");
+const { Rating } = require("../models");
 
 router.get("/rating", getRatings);
 router.get("/rating/:id", getRatingById);
@@ -31,7 +31,7 @@ async function getRatingById(req, res) {
 
 async function createRating(req, res) {
   try {
-    const rating = await Rating.create(req.body);
+    const rating = await Rating.createRating(req.body);
     res.status(201).json(rating);
   } catch (err) {
     res.status(500).json(err.message);

@@ -57,7 +57,7 @@ async function deleteFavorite(req, res) {
 }
 
 
-async function getFavoriteList(req, res) {
+async function getFavoriteList(req, res) { // it gets all the items (with the item details) with at least one favorite.
   try {
     const favorites = await Favorite.favoriteList(userModel, itemModel);
     res.status(200).json(favorites);
