@@ -1,5 +1,5 @@
 "use strict";
-const { Sequelize, DataTypes } = require("sequelize");
+const { Sequelize, DataTypes, Op } = require("sequelize");
 const collection = require("../collection/general-routes");
 
 // const user = require('./user.model');
@@ -29,7 +29,7 @@ let sequelize = new Sequelize(POSTGRES_URL, sequelizeOption);
 //     console.log(error)
 // });
 
-// create models for all schemas
+// Models
 const db = {};
 db.sequelize = sequelize;
 db.userModel = require("./user.model")(sequelize, DataTypes);
@@ -41,7 +41,7 @@ db.notificationModel = require("./notification.model")(sequelize, DataTypes);
 db.ratingModel = require("./rating.model")(sequelize, DataTypes);
 db.reportModel = require("./report.model")(sequelize, DataTypes);
 
-// create collection for all models 
+// Collections
 db.Item = new collection(db.itemModel);
 db.Bid = new collection(db.bidModel);
 db.Comment = new collection(db.commentModel);
@@ -50,8 +50,8 @@ db.Notification = new collection(db.notificationModel);
 db.Rating = new collection(db.ratingModel);
 db.Report = new collection(db.reportModel);
 
-
-// User Associations
+// Relations
+// User relations
 db.userModel.hasMany(db.itemModel, { foreignKey: "userID", sourceKey: "id" });
 db.itemModel.belongsTo(db.userModel, { foreignKey: "userID", targetKey: "id" });
 
@@ -106,7 +106,7 @@ db.reportModel.belongsTo(db.userModel, {
   targetKey: "id",
 });
 
-// Item Associations
+// Item relations
 db.itemModel.hasMany(db.bidModel, { foreignKey: "itemID", sourceKey: "id" });
 db.bidModel.belongsTo(db.itemModel, { foreignKey: "itemID", targetKey: "id" });
 
@@ -143,7 +143,7 @@ db.reportModel.belongsTo(db.itemModel, {
   targetKey: "id",
 });
 
-// Notification Associations
+// Notification relations
 db.bidModel.hasMany(db.notificationModel, {
   foreignKey: "bidID",
   sourceKey: "id",
@@ -179,7 +179,5 @@ db.notificationModel.belongsTo(db.reportModel, {
   foreignKey: "reportID",
   targetKey: "id",
 });
-
-
 
 module.exports = db;

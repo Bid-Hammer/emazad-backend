@@ -1,7 +1,6 @@
 "use strict";
 
 module.exports = (sequelize, DataTypes) => {
-    
   const Rating = sequelize.define("Rating", {
     rating: {
       type: DataTypes.INTEGER,
