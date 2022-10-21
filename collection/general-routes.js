@@ -1,11 +1,12 @@
 "use strict";
-const { Op } = require("sequelize");
+// const { Op } = require("sequelize");
 
 class GeneralRoutes {
   constructor(model) {
     this.model = model;
   }
 
+  // general route for creating anything
   async create(obj) {
     try {
       return await this.model.create(obj);
@@ -14,6 +15,7 @@ class GeneralRoutes {
     }
   }
 
+  // general function for reading anything by id or all
   async read(id) {
     try {
       if (id) {
@@ -26,6 +28,7 @@ class GeneralRoutes {
     }
   }
 
+  // general function for updating anything by id
   async update(id, obj) {
     try {
       const dataById = await this.model.findOne({ where: { id: id } });
@@ -35,6 +38,7 @@ class GeneralRoutes {
     }
   }
 
+  // general function for deleting anything by id
   async delete(id) {
     try {
       return await this.model.destroy({ where: { id: id } });
@@ -43,6 +47,7 @@ class GeneralRoutes {
     }
   }
 
+  // general function for updating anything that has a status to deleted by id
   async hide(id) {
     try {
       return await this.model.update({ status: "deleted" }, { where: { id: id } });
@@ -51,14 +56,14 @@ class GeneralRoutes {
     }
   }
 
-  async readItems(category, subCategory, comments, bids, users, favorite, rating, Op) {
+  // function for getting -> all items || items by category || item by subcategory
+  async readItems(category, subCategory, comments, bids, users, favorite, Op) {
     try {
       const excludedAttributes = ["password", "email", "role", "createdAt", "updatedAt", "token"];
       const include = [
         {
           model: users,
           attributes: { exclude: excludedAttributes },
-          include: [rating],
         },
         {
           model: comments,
@@ -115,21 +120,7 @@ class GeneralRoutes {
     }
   }
 
-  async favoriteList(users, items) {
-    try {
-      const excludedAttributes = ["password", "email", "role", "createdAt", "updatedAt", "token"];
-
-      return await this.model.findAll({
-        include: [
-          { model: users, attributes: { exclude: excludedAttributes } },
-          { model: items, include: [{ model: users, attributes: { exclude: excludedAttributes } }] },
-        ],
-      });
-    } catch (err) {
-      console.log("Error in GeneralRoutes.favoriteList: ", err.message);
-    }
-  }
-
+  // function for getting -> all notificaitons || notifications by user id ----->> not needed till now
   async readNotification(id, Op) {
     try {
       if (id) {
@@ -146,6 +137,7 @@ class GeneralRoutes {
     }
   }
 
+  // function for getting all notifications for a specific user
   async readUserNotifications(id, Op) {
     try {
       return await this.model.findAll({
@@ -156,6 +148,7 @@ class GeneralRoutes {
     }
   }
 
+  // function for creating a rating for a specific user by a specific user
   async createRating(obj, userModel, Op) {
     try {
       const user = await userModel.findOne({ where: { id: obj.userID } });
@@ -176,6 +169,7 @@ class GeneralRoutes {
     }
   }
 
+  // function for getting the average ratings for a specific user
   async getAverageRating(id) {
     try {
       const dataById = await this.model.findAll({ where: { ratedID: id } });
@@ -188,7 +182,23 @@ class GeneralRoutes {
     }
   }
 
-  // create a function to find all favorites for a specific user
+     // function for getting a favorite list for all users
+     async favoriteList(users, items) {
+      try {
+        const excludedAttributes = ["password", "email", "role", "createdAt", "updatedAt", "token"];
+  
+        return await this.model.findAll({
+          include: [
+            { model: users, attributes: { exclude: excludedAttributes } },
+            { model: items, include: [{ model: users, attributes: { exclude: excludedAttributes } }] },
+          ],
+        });
+      } catch (err) {
+        console.log("Error in GeneralRoutes.favoriteList: ", err.message);
+      }
+    }
+
+  // function for getting all favorites for a specific user
   async userFavorites(id, items) {
     try {
       return await this.model.findAll({ where: { userID: id }, include: [items] });
@@ -197,6 +207,7 @@ class GeneralRoutes {
     }
   }
 
+  // function for creating an item 
   async createItem(obj, fs) {
     try {
       return await this.model.create(obj);
@@ -205,6 +216,7 @@ class GeneralRoutes {
       console.log("Error in GeneralRoutes.createItem: ", err.message);
     }
   }
+
 }
 
 module.exports = GeneralRoutes;

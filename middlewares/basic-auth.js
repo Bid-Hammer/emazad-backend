@@ -2,6 +2,7 @@
 const User = require("../models").userModel;
 const fs = require("fs");
 
+// Basic Auth middleware for checking if the user data is valid or not
 const basicAuth = async (req, res, next) => {
   try {
     console.log(req.body);

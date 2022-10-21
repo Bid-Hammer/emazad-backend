@@ -4,12 +4,14 @@ const express = require("express");
 const router = express.Router();
 const { Comment } = require("../models");
 
+// Routes
 router.get("/comment", getComments);
 router.get("/comment/:id", getCommentById);
 router.post("/comment", createComment);
 router.put("/comment/:id", updateComment);
 router.delete("/comment/:id", deleteComment);
 
+// function to get all comments
 async function getComments(req, res) {
   try {
     const comments = await Comment.read();
@@ -19,6 +21,7 @@ async function getComments(req, res) {
   }
 }
 
+// function to get one comment
 async function getCommentById(req, res) {
   try {
     const id = req.params.id;
@@ -29,6 +32,7 @@ async function getCommentById(req, res) {
   }
 }
 
+// function to create a comment
 async function createComment(req, res) {
   try {
     const comment = await Comment.create(req.body);
@@ -38,6 +42,7 @@ async function createComment(req, res) {
   }
 }
 
+// function to update a comment by id
 async function updateComment(req, res) {
   try {
     const id = req.params.id;
@@ -48,6 +53,7 @@ async function updateComment(req, res) {
   }
 }
 
+// function to delete a comment by id
 async function deleteComment(req, res) {
   try {
     const id = req.params.id;

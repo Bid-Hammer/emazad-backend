@@ -1,13 +1,12 @@
 "use strict";
 const User = require("../models").userModel;
 
+// bearer auth for checking the token of the user
 const bearerAuth = async (req, res, next) => {
   if (!req.headers.authorization) {
     next("Invalid Login");
   }
-
   const token = req.headers.authorization.split(" ").pop();
-
   try {
     const validUser = await User.authenticateToken(token);
     const userInfo = await User.findOne({ where: { email: validUser.email } });

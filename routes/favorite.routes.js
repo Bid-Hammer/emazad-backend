@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const { Favorite, userModel, itemModel } = require("../models");
 
+// Routes
 router.get("/favorite", getFavorites);
 router.get("/favorite/:id", getFavoriteById);
 router.get("/favoritelist", getFavoriteList);
@@ -10,7 +11,7 @@ router.post("/favorite", createFavorite);
 router.delete("/favorite/:id", deleteFavorite);
 router.get('/userFavorite/:id', getUserFavorites);
 
-
+// function to get all favorites
 async function getFavorites(req, res) {
   try {
     const favorites = await Favorite.read();
@@ -20,6 +21,7 @@ async function getFavorites(req, res) {
   }
 }
 
+// function to get one favorite
 async function getFavoriteById(req, res) {
   try {
     const id = req.params.id;
@@ -30,6 +32,7 @@ async function getFavoriteById(req, res) {
   }
 }
 
+// function to create a favorite
 async function createFavorite(req, res) {
   try {
     // user can not add the same item to favorite list more than once
@@ -46,6 +49,7 @@ async function createFavorite(req, res) {
   }
 }
 
+// function to delete a favorite by id
 async function deleteFavorite(req, res) {
   try {
     const id = req.params.id;
@@ -56,8 +60,8 @@ async function deleteFavorite(req, res) {
   }
 }
 
-
-async function getFavoriteList(req, res) { // it gets all the items (with the item details) with at least one favorite.
+// function to get all the favorite list for a all users that have at least one favorite with the item details ---> not needed
+async function getFavoriteList(req, res) { 
   try {
     const favorites = await Favorite.favoriteList(userModel, itemModel);
     res.status(200).json(favorites);
@@ -66,6 +70,7 @@ async function getFavoriteList(req, res) { // it gets all the items (with the it
   }
 }
 
+// function to get all favorites for a user
 async function getUserFavorites(req, res) {
   try {
     const favorites = await Favorite.userFavorites(req.params.id, itemModel);
