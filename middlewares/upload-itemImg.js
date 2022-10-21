@@ -1,7 +1,6 @@
 'use strict';
 const multer = require('multer');
 
-
 const storge = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'ImageItems');
@@ -25,7 +24,5 @@ const uploadItemImg = multer({
         cb('giv proper files formate to upload');
     }
 }).array('itemImage', 8);
-
-
 
 module.exports = uploadItemImg;

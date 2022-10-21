@@ -1,11 +1,12 @@
 `use strict`;
 const base64 = require("base-64");
 const bcrypt = require("bcrypt");
-const { itemModel, commentModel, userModel, bidModel, favoriteModel, ratingModel } = require("../models/index");
+const { itemModel, commentModel, userModel, bidModel } = require("../models/index");
 
 const { Op } = require("sequelize");
 const fs = require("fs");
 
+// function for signing up
 const signup = async (req, res) => {
   try {
     const data = {
@@ -26,20 +27,21 @@ const signup = async (req, res) => {
   }
 };
 
+// function for logging in
 const login = async (req, res) => {
   const basicHeader = req.headers.authorization.split(" ");
   const encodedString = basicHeader.pop();
   const decodedString = base64.decode(encodedString);
-  const [email, password] = decodedString.split(":");
-  // check the user name or email or phone number is exists
+  const [loginData, password] = decodedString.split(":");
 
+  // check the user name or email or phone number is exists
   const user = await userModel.findOne({
     where: {
-      [Op.or]: [{ email: email }, { userName: email }, { phoneNumber: email }],
+      [Op.or]: [{ email: loginData }, { userName: loginData }, { phoneNumber: loginData }],
     },
   });
-  // const user = await userModel.findOne();
 
+  // check the password is correct and if the user is blocked
   if (user) {
     const valid = await bcrypt.compare(password, user.password);
     if (valid && user.status !== "blocked") {
@@ -53,20 +55,23 @@ const login = async (req, res) => {
   }
 };
 
+// function for getting all users
 const allUsers = async (req, res) => {
   const userModel = await userModel.findAll();
   res.status(200).json(userModel);
 };
 
+// function for getting user profile (items, comments, bids)
 const getUserProfile = async (req, res) => {
   const id = req.params.id;
   const user = await userModel.findOne({
     where: { id: id },
-    include: [itemModel, commentModel, bidModel, favoriteModel, ratingModel],
+    include: [itemModel, commentModel, bidModel],
   });
   res.status(200).json({ user });
 };
 
+// function for updating user profile
 const updateUserProfile = async (req, res) => {
   const id = req.params.id;
   const obj = req.body;
@@ -78,6 +83,7 @@ const updateUserProfile = async (req, res) => {
   res.status(202).json(updated);
 };
 
+// function for getting user SOLD items
 const soldItems = async (req, res) => {
   const id = req.params.id;
   const user = await userModel.findOne({ where: { id: id }, include: [itemModel] });
@@ -86,24 +92,23 @@ const soldItems = async (req, res) => {
   res.status(200).json(soldItems);
 };
 
+// function for getting user WON items
 const wonItems = async (req, res) => {
   const id = req.params.id;
   const user = await itemModel.findAll({ include: { model: bidModel, include: userModel } });
-
   const wonItems = user.filter(
     (item) =>
       item.Bids.length > 0 &&
       item.Bids[item.Bids.length - 1].dataValues.userID === Number(id) &&
       (item.status === "sold" || item.status === "expired")
   );
-
   res.status(200).json(wonItems);
 };
 
+// function for getting all the items that the user is currently bidding on -> active items
 const userEngagedItems = async (req, res) => {
   const id = req.params.id;
   const user = await itemModel.findAll({ include: { model: bidModel, include: userModel } });
-
   const engagedItems = user.filter((item) => {
     if (item.Bids.length > 0 && item.status === "active") {
       const bids = item.Bids.map((bid) => bid.dataValues.userID);
@@ -112,7 +117,6 @@ const userEngagedItems = async (req, res) => {
       }
     }
   });
-
   res.status(200).json(engagedItems);
 };
 

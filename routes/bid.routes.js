@@ -3,53 +3,36 @@ const express = require("express");
 const router = express.Router();
 const { Bid, Notification, itemModel, bidModel } = require("../models");
 
+// Routes
 router.get("/bid", getBid);
 router.get("/bid/:id", getOneBid);
 router.post("/bid", createBid);
-router.delete("/bid/:id", deleteBid);
 
+// function to get all bids
 async function getBid(req, res) {
   let bid = await Bid.read();
   res.status(200).json(bid);
 }
 
+// function to get one bid
 async function getOneBid(req, res) {
   const id = req.params.id;
   let getOneBid = await Bid.read(id);
   res.status(200).json({ getOneBid });
 }
 
+// function to create a bid and send notifications to all users who have bid on the item
 async function createBid(req, res) {
-  const obj = req.body;
-  const item = await itemModel.findOne({
-    where: { id: obj.itemID },
-    include: [{ model: bidModel }],
-  });
-
   try {
+    const obj = req.body;
+    const item = await itemModel.findOne({ where: { id: obj.itemID }, include: [{ model: bidModel }] });
+
     if (Number(obj.userID) !== item.userID) {
-      let bid = await Bid.create(obj);
+      const bid = await Bid.create(obj);
       const id = bid.dataValues.id;
+      const filteredUsers = filterUsers(item, obj);
 
-      let users = item.Bids.map((bid) => bid.userID);
-      let uniqueUsers = [...new Set(users)];
-      let filteredUsers = uniqueUsers.filter((user) => user !== Number(obj.userID) && user !== item.userID);
-
-      filteredUsers.forEach(async (user) => {
-        await Notification.create({
-          userID: user,
-          bidID: id,
-          itemID: obj.itemID,
-          notiMessage: `You have been outbid on ${item.itemTitle} by ${obj.bidprice}`,
-        });
-      });
-
-      await Notification.create({
-        userID: item.userID,
-        bidID: id,
-        itemID: obj.itemID,
-        notiMessage: `Someone has bid on your item ${item.itemTitle} for ${obj.bidprice}`,
-      });
+      createNotifications(filteredUsers, item, obj, id);
 
       res.status(201).json(bid);
     } else {
@@ -60,11 +43,29 @@ async function createBid(req, res) {
   }
 }
 
-async function deleteBid(req, res) {
-  const id = req.params.id;
+const filterUsers = (item, obj) => {
+  let users = item.Bids.map((bid) => bid.userID);
+  let uniqueUsers = [...new Set(users)];
+  let filteredUsers = uniqueUsers.filter((user) => user !== Number(obj.userID) && user !== item.userID);
+  return filteredUsers;
+};
 
-  let deletedBid = await Bid.delete(id);
-  res.status(204).send(deletedBid);
-}
+const createNotifications = async (users, item, obj, id) => {
+  users.forEach(async (user) => {
+    await Notification.create({
+      userID: user,
+      bidID: id,
+      itemID: obj.itemID,
+      notiMessage: `You have been outbid on ${item.itemTitle} by ${obj.bidprice}`,
+    });
+  });
+
+  await Notification.create({
+    userID: item.userID,
+    bidID: id,
+    itemID: obj.itemID,
+    notiMessage: `Someone has bid on your item ${item.itemTitle} for ${obj.bidprice}`,
+  });
+};
 
 module.exports = router;

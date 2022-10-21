@@ -1,5 +1,6 @@
 "use strict";
 
+// ACL middleware for checking if user is admin or not
 const acl = (capability) => {
   return (req, res, next) => {
     try {

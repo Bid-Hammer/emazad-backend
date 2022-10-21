@@ -6,10 +6,7 @@ const storge = multer.diskStorage({
     cb(null, "ImgeUsers");
   },
   filename: (req, file, cb) => {
-    cb(
-      null,
-      `${Date.now().toString()}_${file.originalname.replace(/\s+/g, "-")}`
-    );
+    cb(null, `${Date.now().toString()}_${file.originalname.replace(/\s+/g, "-")}`);
   },
 });
 
