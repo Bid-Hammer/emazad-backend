@@ -1,17 +1,12 @@
 "use strict";
 const express = require("express");
 const router = express.Router();
-const Sequelize = require("sequelize");
-const { Bid } = require("../models");
-const { Notification } = require("../models");
-const { itemModel, userModel } = require("../models");
-const { bidModel } = require("../models");
+const { Bid, Notification, itemModel, bidModel } = require("../models");
 
 router.get("/bid", getBid);
 router.get("/bid/:id", getOneBid);
 router.post("/bid", createBid);
 router.delete("/bid/:id", deleteBid);
-
 
 async function getBid(req, res) {
   let bid = await Bid.read();
@@ -24,42 +19,21 @@ async function getOneBid(req, res) {
   res.status(200).json({ getOneBid });
 }
 
-async function createNotification(req, res) {
-  let newNotification = req.body;
-  // let notification = await Notification.create(newNotification);
-  res.status(201).json(newNotification);
-}
-
 async function createBid(req, res) {
   const obj = req.body;
-  // create a new bid if the user is not the owner of the item
-  const itemOne = await itemModel.findOne({
-    where: {
-      id: obj.itemID,
-    },
+  const item = await itemModel.findOne({
+    where: { id: obj.itemID },
+    include: [{ model: bidModel }],
   });
 
-
   try {
-    if (Number(obj.userID) !== Number(itemOne.userID)) {
+    if (Number(obj.userID) !== item.userID) {
       let bid = await Bid.create(obj);
       const id = bid.dataValues.id;
 
-      let item = await itemModel.findOne({
-        where: { id: obj.itemID },
-        include: [
-          {
-            model: bidModel,
-          },
-        ],
-      });
       let users = item.Bids.map((bid) => bid.userID);
       let uniqueUsers = [...new Set(users)];
-      let filteredUsers = uniqueUsers.filter(
-        (user) =>
-          Number(user) !== Number(obj.userID) &&
-          Number(user) !== Number(item.userID)
-      );
+      let filteredUsers = uniqueUsers.filter((user) => user !== Number(obj.userID) && user !== item.userID);
 
       filteredUsers.forEach(async (user) => {
         await Notification.create({
@@ -74,7 +48,7 @@ async function createBid(req, res) {
         userID: item.userID,
         bidID: id,
         itemID: obj.itemID,
-        notiMessage: `Someone has bid on ${item.itemTitle} for ${obj.bidprice}`,
+        notiMessage: `Someone has bid on your item ${item.itemTitle} for ${obj.bidprice}`,
       });
 
       res.status(201).json(bid);
@@ -85,7 +59,6 @@ async function createBid(req, res) {
     res.status(500).json({ message: error.message });
   }
 }
-
 
 async function deleteBid(req, res) {
   const id = req.params.id;

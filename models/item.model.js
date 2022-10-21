@@ -17,8 +17,18 @@ module.exports = (sequelize, DataTypes) => {
         "https://www.mub.eps.manchester.ac.uk/ceasblog/wp-content/themes/uom-theme/assets/images/default-thumbnail.jpg",
       ],
     },
-    itemCat: {
-      type: DataTypes.ENUM("Electronics", "Clothes", "Real Estate", "Pets", "Vehicles", "Others"),
+    category: {
+      type: DataTypes.ENUM("electronics", "clothes", "realestate", "pets", "vehicles", "others"),
+      allowNull: false,
+    },
+
+    subCategory: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+
+    itemCondition: {
+      type: DataTypes.ENUM("New", "Used"),
       allowNull: false,
     },
 
@@ -38,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
     },
 
     startDate: {
-      type: DataTypes.DATE, 
+      type: DataTypes.DATE,
       allowNull: false,
     },
 

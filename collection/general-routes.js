@@ -45,108 +45,84 @@ class GeneralRoutes {
 
   async hide(id) {
     try {
-      return await this.model.update(
-        { status: "deleted" },
-        { where: { id: id } }
-      );
+      return await this.model.update({ status: "deleted" }, { where: { id: id } });
     } catch (err) {
       console.log("Error in GeneralRoutes.delete: ", err.message);
     }
   }
 
-
-  async itemWithAllInfo(comments, bids, users, favorite, rating, Op) {
+  async readItems(category, subCategory, comments, bids, users, favorite, rating, Op) {
     try {
-      const excludedAttributes = [
-        "password",
-        "email",
-        "role",
-        "createdAt",
-        "updatedAt",
-        "token",
-      ];
-      return await this.model.findAll({
-        where: {
-          [Op.or]: [{ status: "active" }, { status: "standBy" }]
+      const excludedAttributes = ["password", "email", "role", "createdAt", "updatedAt", "token"];
+      const include = [
+        {
+          model: users,
+          attributes: { exclude: excludedAttributes },
+          include: [rating],
         },
-        include: [
-          {
-            model: users,
-            attributes: {
-              exclude: excludedAttributes,
-            },
-            include: [rating],
-          },
-          {
-            model: comments,
-            include: [
-              {
-                model: users,
-                attributes: {
-                  exclude: excludedAttributes,
-                },
-              },
-            ],
-          },
-          {
-            model: bids,
-            include: [
-              {
-                model: users,
-                attributes: {
-                  exclude: excludedAttributes,
-                },
-              },
-            ],
-          },
-          {
-            model: favorite,
-            include: [
-              {
-                model: users,
-                attributes: {
-                  exclude: excludedAttributes,
-                },
-              },
-            ],
-          },
-        ],
+        {
+          model: comments,
+          include: [{ model: users, attributes: { exclude: excludedAttributes } }],
+        },
+        {
+          model: bids,
+          include: [{ model: users, attributes: { exclude: excludedAttributes } }],
+        },
+        {
+          model: favorite,
+          include: [{ model: users, attributes: { exclude: excludedAttributes } }],
+        },
+      ];
+
+      if (category === null && subCategory === null) {
+        const item = await this.model.findAll({
+          where: { [Op.or]: [{ status: "active" }, { status: "standBy" }] },
+          include,
+        });
+        const sortedItems = item.sort((a, b) => {
+          return new Date(a.endDate) - new Date(b.endDate);
+        });
+        return sortedItems;
+      }
+
+      if (category !== null && subCategory === null) {
+        const item = await this.model.findAll({
+          where: { [Op.and]: [{ category: category }, { [Op.or]: [{ status: "active" }, { status: "standBy" }] }] },
+          include,
+        });
+        const sortedItems = item.sort((a, b) => {
+          return new Date(a.endDate) - new Date(b.endDate);
+        });
+        return sortedItems;
+      }
+
+      const item = await this.model.findAll({
+        where: {
+          [Op.and]: [
+            { category: category },
+            { subCategory: subCategory },
+            { [Op.or]: [{ status: "active" }, { status: "standBy" }] },
+          ],
+        },
+        include,
       });
+      const sortedItems = item.sort((a, b) => {
+        return new Date(a.endDate) - new Date(b.endDate);
+      });
+      return sortedItems;
     } catch (err) {
-      console.log("Error in GeneralRoutes.itemWithAll: ", err.message);
+      console.log("Error in GeneralRoutes.readItems: ", err.message);
     }
   }
 
   async favoriteList(users, items) {
     try {
-      const excludedAttributes = [
-        "password",
-        "email",
-        "role",
-        "createdAt",
-        "updatedAt",
-        "token",
-      ];
+      const excludedAttributes = ["password", "email", "role", "createdAt", "updatedAt", "token"];
 
       return await this.model.findAll({
         include: [
-          {
-            model: users,
-            attributes: {
-              exclude: excludedAttributes,
-            },
-          },
-          {
-            model: items,
-            include: [
-              {
-                model: users,
-                attributes: {
-                  exclude: excludedAttributes,
-                },
-              },
-            ],
-          },
+          { model: users, attributes: { exclude: excludedAttributes } },
+          { model: items, include: [{ model: users, attributes: { exclude: excludedAttributes } }] },
         ],
       });
     } catch (err) {
@@ -154,9 +130,7 @@ class GeneralRoutes {
     }
   }
 
-
   async readNotification(id, Op) {
-
     try {
       if (id) {
         return await this.model.findOne({
@@ -168,42 +142,35 @@ class GeneralRoutes {
         });
       }
     } catch (err) {
-      console.log("Error in GeneralRoutes.read: ", err.message);
+      console.log("Error in GeneralRoutes.readNotification: ", err.message);
     }
   }
 
-  
   async readUserNotifications(id, Op) {
     try {
       return await this.model.findAll({
         where: { [Op.and]: [{ userID: id }, { [Op.or]: [{ status: "unread" }, { status: "read" }] }] },
       });
     } catch (err) {
-      console.log("Error in GeneralRoutes.read: ", err.message);
+      console.log("Error in GeneralRoutes.readUserNotifications: ", err.message);
     }
   }
 
-
-  async createRating(obj) {
+  async createRating(obj, userModel, Op) {
     try {
-      const user = await this.model.findOne({
-        where: { id: obj.userID },
+      const user = await userModel.findOne({ where: { id: obj.userID } });
+      const ratedUser = await userModel.findOne({ where: { id: obj.ratedID } });
+      const rating = await this.model.findOne({
+        where: { [Op.and]: [{ userID: obj.userID }, { ratedID: obj.ratedID }] },
       });
-      const ratedUser = await this.model.findOne({
-        where: { id: obj.ratedID },
-      });
+
       if (user.id === ratedUser.id) {
         return "You can't rate yourself";
-      } else {
-        const rating = await this.model.findOne({
-          where: { userID: obj.userID } && { ratedID: obj.ratedID },
-        });
-        if (rating) {
-          return "You can't rate more than once";
-        } else {
-          return await this.model.create(obj);
-        }
       }
+      if (rating) {
+        return "You can't rate more than once";
+      }
+      return await this.model.create(obj);
     } catch (err) {
       console.log("Error in GeneralRoutes.createRating: ", err.message);
     }
@@ -221,8 +188,7 @@ class GeneralRoutes {
     }
   }
 
-
-  // create a function to find all favorites for a specific user 
+  // create a function to find all favorites for a specific user
   async userFavorites(id, items) {
     try {
       return await this.model.findAll({ where: { userID: id }, include: [items] });
@@ -230,9 +196,6 @@ class GeneralRoutes {
       console.log("Error in GeneralRoutes.getFavorites: ", err.message);
     }
   }
-
-
-
 
   async createItem(obj, fs) {
     try {
