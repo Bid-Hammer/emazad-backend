@@ -227,6 +227,23 @@ class GeneralRoutes {
       console.log("Error in GeneralRoutes.getFavorites: ", err.message);
     }
   }
+  
+  // // send a message for a specific user
+  // async sendMessage(obj, users) {
+  //   try {
+  //     const sender = await users.findOne({ where: { userId: obj.senderId } });
+  //     const receiver = await users.findOne({ where: { userId: obj.receiverId } });
+
+  //     if (sender.id === receiver.id) {
+  //       return "You can't send a message to yourself";
+  //     }
+  //     return await this.model.create(obj);
+  //   } catch (err) {
+  //     console.log("Error in GeneralRoutes.sendMessage: ", err.message);
+  //   }
+  // }
+
+
 }
 
 module.exports = GeneralRoutes;

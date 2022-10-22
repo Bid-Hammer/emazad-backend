@@ -14,6 +14,8 @@ const favoriteRoutes = require("./routes/favorite.routes");
 const notificationRoutes = require("./routes/notification.routes");
 const ratingRoutes = require("./routes/rating.routes");
 const reportRoutes = require("./routes/report.routes");
+const chatRoutes = require("./routes/chat.routes");
+
 
 app.use(cors());
 app.use(express.json());
@@ -26,6 +28,8 @@ app.use(favoriteRoutes);
 app.use(notificationRoutes);
 app.use(ratingRoutes);
 app.use(reportRoutes);
+app.use(chatRoutes);
+
 
 app.get("/", (req, res) => {
   res.status(200).send("Home Page");
