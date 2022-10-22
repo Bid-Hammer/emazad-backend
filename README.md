@@ -11,10 +11,10 @@ Auction Web Application Backend built using JavaScript, Node JS, Express JS, Seq
 
 # TODO
 
-1. Reply for Comments
-2. Edit Item images ( re-uploading images )
-3. Refactor Code
-4. Editing Report
+1. ~~Reply for Comments~~
+2. Edit Item images ( re-uploading images ) (Qais)
+3. Refactor Code 
+4. Editing Report 
 5. Refactor Controller for each model
 6. Default Image for User and Item
 7. Package for resizing uploaded Images
@@ -23,7 +23,7 @@ Auction Web Application Backend built using JavaScript, Node JS, Express JS, Seq
 10. Admin Routes and everything
 11. Payment
 12. Chat system (socket.io)
-13. Notifications for comments ( the item owner only )
+13. ~~Notifications for comments ( the item owner only )~~
 14. Item routes 
 
 # Suggested Names:
