@@ -1,15 +1,17 @@
 "use strict";
-module.exports = (sequelize, DataTypes) => {
 
+module.exports = (sequelize, DataTypes) => {
   const Comment = sequelize.define("Comment", {
-    userID: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    itemID: {
+
+    itemId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+
     comment: {
       type: DataTypes.STRING,
       allowNull: false,

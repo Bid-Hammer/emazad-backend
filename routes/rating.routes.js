@@ -2,8 +2,6 @@
 const express = require("express");
 const router = express.Router();
 const { Rating, userModel } = require("../models");
-// const { Op } = require("../models").sequelize;
-const { Op } = require("sequelize");
 
 // Routes
 router.get("/rating", getRatings);
@@ -37,7 +35,7 @@ async function getRatingById(req, res) {
 // function to create a rating
 async function createRating(req, res) {
   try {
-    const rating = await Rating.createRating(req.body, userModel, Op);
+    const rating = await Rating.createRating(req.body, userModel);
     res.status(201).json(rating);
   } catch (err) {
     res.status(500).json(err.message);

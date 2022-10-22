@@ -10,11 +10,11 @@ module.exports = (sequelize, DataTypes) => {
         max: 5,
       },
     },
-    userID: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    ratedID: {
+    ratedId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },

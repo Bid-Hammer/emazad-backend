@@ -1,14 +1,13 @@
 "use strict";
 
 module.exports = (sequelize, DataTypes) => {
-
   const Bid = sequelize.define("Bid", {
-    userID: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
 
-    itemID: {
+    itemId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -21,4 +20,3 @@ module.exports = (sequelize, DataTypes) => {
 
   return Bid;
 };
-

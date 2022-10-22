@@ -2,11 +2,10 @@
 
 const express = require("express");
 const router = express.Router();
-const { Comment } = require("../models");
+const { Comment, Item, Notification } = require("../models");
 
 // Routes
 router.get("/comment", getComments);
-router.get("/comment/:id", getCommentById);
 router.post("/comment", createComment);
 router.put("/comment/:id", updateComment);
 router.delete("/comment/:id", deleteComment);
@@ -21,21 +20,17 @@ async function getComments(req, res) {
   }
 }
 
-// function to get one comment
-async function getCommentById(req, res) {
-  try {
-    const id = req.params.id;
-    const comment = await Comment.read(id);
-    res.status(200).json(comment);
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
-}
-
-// function to create a comment
+// function to create a comment and send notification to the user who created the post
 async function createComment(req, res) {
   try {
     const comment = await Comment.create(req.body);
+    const item = await Item.read(comment.itemId);
+    await Notification.create({
+      userId: item.userId,
+      itemId: item.id,
+      commentId: comment.id,
+      notiMessage: `Someone commented on your item: ${item.itemTitle}`,
+    });
     res.status(201).json(comment);
   } catch (err) {
     res.status(500).json(err.message);

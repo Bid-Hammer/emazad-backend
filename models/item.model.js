@@ -32,12 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
 
-    userID: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-
-    latestBid: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -45,6 +40,12 @@ module.exports = (sequelize, DataTypes) => {
     initialPrice: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    
+    latestBid: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
     },
 
     startDate: {
@@ -57,9 +58,9 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM("standBy", "active", "sold", "expired", "deleted"),
+      type: DataTypes.ENUM("standby", "active", "sold", "expired", "deleted"),
       allowNull: false,
-      defaultValue: "standBy",
+      defaultValue: "standby",
     },
   });
 

@@ -1,8 +1,7 @@
 "use strict";
 const express = require("express");
 const router = express.Router();
-const { Item, commentModel, userModel, bidModel, favoriteModel } = require("../models/index");
-const { Op } = require("sequelize");
+const { Item, Notification, userModel, bidModel, commentModel, replyModel } = require("../models/index");
 const uploadItemImg = require("../middlewares/upload-itemImg");
 const fs = require("fs");
 
@@ -12,28 +11,38 @@ router.put("/item/:id", uploadItemImg, updateItem);
 router.delete("/item/:id", deleteItem);
 router.put("/itemhide/:id", hideItem);
 
-router.get("/item", getItems);
-router.get("/item/:category", getItems);
-router.get("/item/:category/:subCategory", getItems);
+// get items by category and status
+router.get("/items", getItems);
+router.get("/items/:status", getItems);
+router.get("/items/:status/:category", getItems);
+router.get("/items/:status/:category/:subCategory", getItems);
 router.get("/item/:id", getOneItem);
 
 // function to get all items -> by category || subCategory || all
 async function getItems(req, res) {
   try {
+    let status = req.params.status;
+    let category = req.params.category;
+    let subCategory = req.params.subCategory;
 
-    // if there is category and subCategory
-    if (req.params.category && req.params.subCategory) {
-      const item = await Item.readItems(req.params.category, req.params.subCategory, commentModel, bidModel, userModel, favoriteModel, Op);
+    // if there is category and subCategory based on the status
+    if (status && category && subCategory) {
+      const item = await Item.readItems(status, category, subCategory, userModel, bidModel);
       res.status(200).json(item);
 
-    // if there is only category
-    } else if (req.params.category) {
-      const item = await Item.readItems(req.params.category, null, commentModel, bidModel, userModel, favoriteModel, Op);
+      // if there is only category and status
+    } else if (status && category) {
+      const item = await Item.readItems(status, category, null, userModel, bidModel);
       res.status(200).json(item);
 
-    // if there is no category or subCategory  
+      // if there is only status
+    } else if (status) {
+      const item = await Item.readItems(status, null, null, userModel, bidModel);
+      res.status(200).json(item);
+
+      // if there is no status
     } else {
-      const item = await Item.readItems(null, null, commentModel, bidModel, userModel, favoriteModel, Op);
+      const item = await Item.readItems(null, null, null, userModel, bidModel);
       res.status(200).json(item);
     }
   } catch (err) {
@@ -41,17 +50,10 @@ async function getItems(req, res) {
   }
 }
 
-// function to hide an item
-async function hideItem(req, res) {
-  const id = req.params.id;
-  const item = await Item.hide(id);
-  res.status(200).json(item);
-}
-
 // function to get one item by id
 async function getOneItem(req, res) {
   let id = req.params.id;
-  let item = await Item.read(id);
+  let item = await Item.readOneItem(id, userModel, bidModel, commentModel, replyModel);
   res.status(200).json(item);
 }
 
@@ -82,34 +84,67 @@ async function updateItem(req, res) {
 async function deleteItem(req, res) {
   const id = req.params.id;
   const itemDeleted = await Item.read(id);
-  itemDeleted.itemImage.map((path) => { fs.unlinkSync(path); });
+  itemDeleted.itemImage.map((path) => {
+    fs.unlinkSync(path);
+  });
   let deletedItem = await Item.delete(id);
   res.status(204).json({ deletedItem });
 }
 
+// function to hide an item
+async function hideItem(req, res) {
+  const id = req.params.id;
+  const item = await Item.hide(id);
+  res.status(200).json(item);
+}
+
 // Update item status automatically based on the date
 setInterval(async () => {
-  const currentDate = new Date();
-  const items = await Item.read();
+  try {
+    const currentDate = new Date();
+    const items = await Item.read();
 
-  items.map(async (item) => {
+    items.map(async (item) => {
+      // change status from standby to active when the start date is reached
+      if (item.status === "standby" && item.startDate < currentDate) {
+        await Item.update(item.id, { status: "active" });
 
-    // change status from standby to active when the start date is reached
-    if (item.status === "standBy" && item.startDate < currentDate) {
-      await Item.update(item.id, { status: "active" });
-    }
+        await Notification.create({
+          userId: item.userId,
+          itemId: item.id,
+          notiMessage: `Your item ${item.itemTitle} is now active`,
+        });
+      }
 
-    // change status from active to sold after the end date is reached
-    if (item.status === "active" && item.endDate < currentDate) {
-      await Item.update(item.id, { status: "sold" });
-    }
+      // change status from active to sold after the end date is reached
+      if (item.status === "active" && item.endDate < currentDate) {
+        await Item.update(item.id, { status: "sold" });
 
-    // change status from sold to expired after 30 days from the end date
-    if (item.status === "sold" && item.endDate < currentDate - 2592000000) {
-      await Item.update(item.id, { status: "expired" });
-    }
-  });
+        if (bidModel && bidModel.length > 0) {
+          const itemBids = await bidModel.findOne({ where: { itemId: item.id, bigprice: item.latestBid } });
+          await Notification.create({
+            userId: itemBids.userId,
+            itemId: item.id,
+            notiMessage: `You won the bid for ${item.itemTitle}`,
+          });
+        }
+        await Notification.create({
+          userId: item.userId,
+          itemId: item.id,
+          notiMessage: `The auction for your item ${item.itemTitle} is over`,
+        });
+      }
+
+      // change status from sold to expired after 30 days from the end date
+      if (item.status === "sold" && item.endDate < currentDate - 60000) {
+        await Item.update(item.id, { status: "expired" });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+
   // setting the interval to 1 minute
-}, 100000);
+}, 60000);
 
 module.exports = router;
