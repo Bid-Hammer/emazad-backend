@@ -9,9 +9,9 @@ router.get("/favorite/:id", getFavoriteById);
 router.get("/favoritelist", getFavoriteList);
 router.post("/favorite", createFavorite);
 router.delete("/favorite/:id", deleteFavorite);
-router.get('/userFavorite/:id', getUserFavorites);
+router.get("/userFavorite/:id", getUserFavorites);
 
-// function to get all favorites
+// function to get all favorites ---> not needed
 async function getFavorites(req, res) {
   try {
     const favorites = await Favorite.read();
@@ -21,7 +21,7 @@ async function getFavorites(req, res) {
   }
 }
 
-// function to get one favorite
+// function to get one favorite ---> not needed
 async function getFavoriteById(req, res) {
   try {
     const id = req.params.id;
@@ -32,12 +32,32 @@ async function getFavoriteById(req, res) {
   }
 }
 
+// function to get all the favorite list for a all users that have at least one favorite with the item details ---> not needed
+async function getFavoriteList(req, res) {
+  try {
+    const favorites = await Favorite.favoriteList(userModel, itemModel);
+    res.status(200).json(favorites);
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
+}
+
+// function to get all favorites for a user
+async function getUserFavorites(req, res) {
+  try {
+    const favorites = await Favorite.userFavorites(req.params.id, itemModel);
+    res.status(200).json(favorites);
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
+}
+
 // function to create a favorite
 async function createFavorite(req, res) {
   try {
     // user can not add the same item to favorite list more than once
-    const favorites = await Favorite.userFavorites(req.body.userID, itemModel);
-    const isExist = favorites.some((favorite) => favorite.itemID === req.body.itemID);
+    const favorites = await Favorite.userFavorites(req.body.userId, itemModel);
+    const isExist = favorites.some((favorite) => favorite.itemId === req.body.itemId);
     if (isExist) {
       res.status(400).json({ message: "This item is already in your favorite list" });
     } else {
@@ -59,26 +79,5 @@ async function deleteFavorite(req, res) {
     res.status(500).json(err.message);
   }
 }
-
-// function to get all the favorite list for a all users that have at least one favorite with the item details ---> not needed
-async function getFavoriteList(req, res) { 
-  try {
-    const favorites = await Favorite.favoriteList(userModel, itemModel);
-    res.status(200).json(favorites);
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
-}
-
-// function to get all favorites for a user
-async function getUserFavorites(req, res) {
-  try {
-    const favorites = await Favorite.userFavorites(req.params.id, itemModel);
-    res.status(200).json(favorites);
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
-}
-
 
 module.exports = router;

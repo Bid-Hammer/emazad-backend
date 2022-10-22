@@ -2,23 +2,26 @@
 
 module.exports = (sequelize, DataTypes) => {
   const Notification = sequelize.define("Notification", {
-    userID: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    itemID: {
+    itemId: {
       type: DataTypes.INTEGER,
     },
-    commentID: {
+    commentId: {
       type: DataTypes.INTEGER,
     },
-    bidID: {
+    replyId: {
       type: DataTypes.INTEGER,
     },
-    ratingID: {
+    bidId: {
       type: DataTypes.INTEGER,
     },
-    reportID: {
+    ratingId: {
+      type: DataTypes.INTEGER,
+    },
+    reportId: {
       type: DataTypes.INTEGER,
     },
     notiMessage: {

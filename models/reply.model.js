@@ -1,16 +1,21 @@
 "use strict";
 
 module.exports = (sequelize, DataTypes) => {
-  const Favorite = sequelize.define("Favorite", {
+  const Reply = sequelize.define("Reply", {
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
 
-    itemId: {
+    commentId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+
+    reply: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   });
-  return Favorite;
-};
+  return Reply;
+}
