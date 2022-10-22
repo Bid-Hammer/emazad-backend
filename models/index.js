@@ -37,6 +37,8 @@ db.favoriteModel = require("./favorite.model")(sequelize, DataTypes);
 db.notificationModel = require("./notification.model")(sequelize, DataTypes);
 db.ratingModel = require("./rating.model")(sequelize, DataTypes);
 db.reportModel = require("./report.model")(sequelize, DataTypes);
+db.chatModel = require("./chat.model")(sequelize, DataTypes);
+
 
 // Collections
 db.Item = new collection(db.itemModel);
@@ -47,6 +49,8 @@ db.Favorite = new collection(db.favoriteModel);
 db.Notification = new collection(db.notificationModel);
 db.Rating = new collection(db.ratingModel);
 db.Report = new collection(db.reportModel);
+db.Chat = new collection(db.chatModel);
+
 
 // Relations
 
