@@ -1,41 +1,31 @@
 "use strict";
 const express = require("express");
 const router = express.Router();
-const { Chat } = require("../models");
+const { Chat, userModel } = require("../models");
 
+router.get("/chat/:senderId/:receiverId", getChat);
+router.post("/chat", sendChat);
 
-// Chat Routes:
-
-router.get("/chat", async (req, res) => {
-  const chat = await Chat.read();
-  res.json(chat);
+ async function getChat(req, res, next) {
+    try {
+        const senderId = req.params.senderId;
+        const receiverId = req.params.receiverId;
+        const chat = await Chat.getChatMessages(senderId, receiverId);
+        res.status(200).json(chat);
+    } catch (error) {
+        next(error);
+    }
 }
-);
 
-// get all messages from a specific user
-router.get("/chat/:id", async (req, res) => {
-    const id = req.params.id;
-    const chat = await Chat.read(id);
-    res.json(chat);
-    }
-);
 
-// post a message to a specific user
-router.post("/chat/:id", async (req, res) => {
-    const id = req.params.id;
-    const message = req.body;
-    console.log(message)
-    const chat = await Chat.sendMessage(id, message);
-    res.json(chat);
-    }
-);
-
-router.delete("/chat/:id", async (req, res) => { 
-    const chat = await Chat.destroy({
-        where: { id: req.params.id },
-    });
-    res.json(chat);
-    });
+async function sendChat (req, res, next) {
+  try {
+    const chat = await Chat.createChat( req.body, userModel);
+    res.status(201).json(chat);
+  } catch (e) {
+    next(e);
+  }
+}
 
 
     module.exports = router;
