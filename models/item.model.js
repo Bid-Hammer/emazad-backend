@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    
+
     latestBid: {
       type: DataTypes.INTEGER,
       allowNull: false,

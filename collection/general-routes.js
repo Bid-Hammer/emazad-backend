@@ -151,9 +151,10 @@ class GeneralRoutes {
   // function for getting all notifications for a specific user
   async readUserNotifications(id) {
     try {
-      return await this.model.findAll({
+      const notifications = await this.model.findAll({
         where: { userId: id, status: ["unread", "read"] },
       });
+      return notifications.sort((a, b) => b.createdAt - a.createdAt);
     } catch (err) {
       console.log("Error in GeneralRoutes.readUserNotifications: ", err.message);
     }

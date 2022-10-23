@@ -4,6 +4,7 @@ const router = express.Router();
 const { Item, Notification, userModel, bidModel, commentModel, replyModel } = require("../models/index");
 const uploadItemImg = require("../middlewares/upload-itemImg");
 const fs = require("fs");
+const { Op, col } = require("sequelize");
 
 // Routes
 router.post("/item", uploadItemImg, addItem);
@@ -103,6 +104,7 @@ setInterval(async () => {
   try {
     const currentDate = new Date();
     const items = await Item.read();
+    // console.log(currentDate);
 
     items.map(async (item) => {
       // change status from standby to active when the start date is reached
@@ -120,8 +122,10 @@ setInterval(async () => {
       if (item.status === "active" && item.endDate < currentDate) {
         await Item.update(item.id, { status: "sold" });
 
-        if (bidModel && bidModel.length > 0) {
-          const itemBids = await bidModel.findOne({ where: { itemId: item.id, bigprice: item.latestBid } });
+        if (item.latestBid > 0) {
+          const itemBids = await bidModel.findOne({
+            where: { itemId: item.id, bidprice: item.latestBid },
+          });
           await Notification.create({
             userId: itemBids.userId,
             itemId: item.id,
@@ -136,7 +140,7 @@ setInterval(async () => {
       }
 
       // change status from sold to expired after 30 days from the end date
-      if (item.status === "sold" && item.endDate < currentDate - 60000) {
+      if (item.status === "sold" && item.endDate < currentDate - 30 * 24 * 60 * 60 * 1000) {
         await Item.update(item.id, { status: "expired" });
       }
     });
@@ -145,6 +149,6 @@ setInterval(async () => {
   }
 
   // setting the interval to 1 minute
-}, 60000);
+}, 10000);
 
 module.exports = router;
