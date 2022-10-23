@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     },
 
     message: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING,
         allowNull: false,
       },
 

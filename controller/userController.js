@@ -11,10 +11,9 @@ const signup = async (req, res) => {
   try {
     const data = {
       ...req.body,
-      image: req.file ? req.file.path : readFileSync("ImgeUsers/dont-delete-2.jpg"),
-
       // to set a default image when the user does not upload an image, use the line of code below:
-      // image: req.file ? req.file.path : req.file ='https://clementjames.org/wp-content/uploads/2019/09/avatar-1577909_960_720-1.png', 
+      image: req.file ? req.file.path : req.file ='https://clementjames.org/wp-content/uploads/2019/09/avatar-1577909_960_720-1.png', 
+
       password: await bcrypt.hash(req.body.password, 10),
     };
     const user = await userModel.create(data);

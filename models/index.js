@@ -117,4 +117,14 @@ db.notificationModel.belongsTo(db.replyModel, { foreignKey: "replyId", targetKey
 db.ratingModel.hasMany(db.notificationModel, { foreignKey: "ratingId", sourceKey: "id" });
 db.notificationModel.belongsTo(db.ratingModel, { foreignKey: "ratingId", targetKey: "id" });
 
+// Chat relations
+
+db.userModel.hasMany(db.chatModel, { foreignKey: "senderId", sourceKey: "id" });
+db.chatModel.belongsTo(db.userModel, { foreignKey: "senderId", targetKey: "id" });
+
+db.userModel.hasMany(db.chatModel, { foreignKey: "receiverId", sourceKey: "id" });
+db.chatModel.belongsTo(db.userModel, { foreignKey: "receiverId", targetKey: "id" });
+
+
+
 module.exports = db;

@@ -219,29 +219,32 @@ class GeneralRoutes {
     }
   }
 
-  // function for getting all favorites for a specific user
-  async userFavorites(id, items) {
+
+  async createChat(obj, userModel) {
     try {
-      return await this.model.findAll({ where: { userId: id }, include: [items] });
+      const user = await userModel.findOne({ where: { id: obj.senderId } });
+      const receiver = await userModel.findOne({ where: { id: obj.receiverId } });
+      const chat = await this.model.findOne({
+        where: { senderId: obj.senderId, receiverId: obj.receiverId },
+      });
+
+      return await this.model.create(obj);
     } catch (err) {
-      console.log("Error in GeneralRoutes.getFavorites: ", err.message);
+      console.log("Error in GeneralRoutes.createRating: ", err.message);
     }
   }
-  
-  // // send a message for a specific user
-  // async sendMessage(obj, users) {
-  //   try {
-  //     const sender = await users.findOne({ where: { userId: obj.senderId } });
-  //     const receiver = await users.findOne({ where: { userId: obj.receiverId } });
 
-  //     if (sender.id === receiver.id) {
-  //       return "You can't send a message to yourself";
-  //     }
-  //     return await this.model.create(obj);
-  //   } catch (err) {
-  //     console.log("Error in GeneralRoutes.sendMessage: ", err.message);
-  //   }
-  // }
+
+  // to get messages of a specific chat
+  async getChatMessages(receiverId, senderId) {
+    try {
+      return await this.model.findAll({ where: { receiverId: receiverId, senderId: senderId } });
+    } catch (err) {
+      console.log("Error in GeneralRoutes.getChatMessages: ", err.message);
+    }
+  }
+
+
 
 
 }

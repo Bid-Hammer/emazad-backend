@@ -48,6 +48,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: "active",
     },
+
     token: {
       type: DataTypes.VIRTUAL,
       get() {
@@ -72,6 +73,9 @@ module.exports = (sequelize, DataTypes) => {
         return acl[this.role];
       },
     },
+
+
+
   });
 
   User.authenticateToken = (token) => {
