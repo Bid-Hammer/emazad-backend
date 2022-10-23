@@ -1,10 +1,11 @@
 "use strict";
 const express = require("express");
 const router = express.Router();
-const { Item, Notification, userModel, bidModel, commentModel, replyModel } = require("../models/index");
+const { Item, Notification, bidModel } = require("../models/index");
 const uploadItemImg = require("../middlewares/upload-itemImg");
 const fs = require("fs");
-const { Op, col } = require("sequelize");
+
+const { getItems, getOneItem, addItem } = require("../controller/itemController");
 
 // Routes
 router.post("/item", uploadItemImg, addItem);
@@ -18,60 +19,6 @@ router.get("/items/:status", getItems);
 router.get("/items/:status/:category", getItems);
 router.get("/items/:status/:category/:subCategory", getItems);
 router.get("/item/:id", getOneItem);
-
-// function to get all items -> by category || subCategory || all
-async function getItems(req, res) {
-  try {
-    let status = req.params.status;
-    let category = req.params.category;
-    let subCategory = req.params.subCategory;
-
-    // if there is category and subCategory based on the status
-    if (status && category && subCategory) {
-      const item = await Item.readItems(status, category, subCategory, userModel, bidModel);
-      res.status(200).json(item);
-
-      // if there is only category and status
-    } else if (status && category) {
-      const item = await Item.readItems(status, category, null, userModel, bidModel);
-      res.status(200).json(item);
-
-      // if there is only status
-    } else if (status) {
-      const item = await Item.readItems(status, null, null, userModel, bidModel);
-      res.status(200).json(item);
-
-      // if there is no status
-    } else {
-      const item = await Item.readItems(null, null, null, userModel, bidModel);
-      res.status(200).json(item);
-    }
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-}
-
-// function to get one item by id
-async function getOneItem(req, res) {
-  let id = req.params.id;
-  let item = await Item.readOneItem(id, userModel, bidModel, commentModel, replyModel);
-  res.status(200).json(item);
-}
-
-// function to add an item
-async function addItem(req, res) {
-  try {
-    const dataBody = {
-      ...req.body,
-      itemImage: req.files.map((file) => file.path),
-    };
-    const item = await Item.createItem(dataBody, fs);
-    res.status(201).json(item);
-  } catch (err) {
-    req.files.map((file) => fs.unlinkSync(file.path));
-    res.status(500).json({ message: err.message });
-  }
-}
 
 // function to update an item by id
 async function updateItem(req, res) {

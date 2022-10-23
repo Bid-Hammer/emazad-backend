@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM("unread", "read", "deleted"),
+      type: DataTypes.ENUM("unread", "read"),
       allowNull: false,
       defaultValue: "unread",
     },
