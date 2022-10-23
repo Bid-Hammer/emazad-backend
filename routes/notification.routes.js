@@ -2,6 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const { Notification } = require("../models");
+const { getNotifications, getUserNotifications, updateNotification } = require("../controller/notificationController");
 
 // Routes
 router.get("/notif", getNotifications);
@@ -11,47 +12,11 @@ router.post("/notif", createNotification);
 router.put("/notif/:id", updateNotification);
 router.delete("/notif/:id", deleteNotification);
 
-// function to get all notifications
-async function getNotifications(req, res) {
-  try {
-    const id = req.params.id;
-    let notifications;
-    id
-      ? (notifications = await Notification.readNotification(id))
-      : (notifications = await Notification.readNotification(null));
-    res.status(200).json(notifications);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-}
-
-// function to get all notifications for a specific user
-async function getUserNotifications(req, res) {
-  try {
-    const id = req.params.id;
-    const notifications = await Notification.readUserNotifications(id);
-    res.status(200).json(notifications);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-}
-
 // function to create a notification
 async function createNotification(req, res) {
   try {
     const notification = await Notification.create(req.body);
     res.status(201).json(notification);
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
-}
-
-// function to update a notification by id
-async function updateNotification(req, res) {
-  try {
-    const id = req.params.id;
-    const notification = await Notification.updateNotification(id, req.body);
-    res.status(202).json(notification);
   } catch (err) {
     res.status(500).json(err.message);
   }

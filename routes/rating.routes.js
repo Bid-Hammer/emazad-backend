@@ -1,7 +1,8 @@
 "use strict";
 const express = require("express");
 const router = express.Router();
-const { Rating, userModel } = require("../models");
+const { Rating } = require("../models");
+const { createRating, getUserRating } = require("../controller/ratingController");
 
 // Routes
 router.get("/rating", getRatings);
@@ -32,16 +33,6 @@ async function getRatingById(req, res) {
   }
 }
 
-// function to create a rating
-async function createRating(req, res) {
-  try {
-    const rating = await Rating.createRating(req.body, userModel);
-    res.status(201).json(rating);
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
-}
-
 // function to update a rating by id
 async function updateRating(req, res) {
   try {
@@ -58,18 +49,7 @@ async function deleteRating(req, res) {
   try {
     const id = req.params.id;
     const rating = await Rating.delete(id);
-    res.status(204).json( "Rating Deleted Successfully" );
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
-}
-
-// function to get a user's average rating
-async function getUserRating(req, res) {
-  try {
-    const id = req.params.id;
-    const rating = await Rating.getAverageRating(id);
-    res.status(200).json(rating);
+    res.status(204).json("Rating Deleted Successfully");
   } catch (err) {
     res.status(500).json(err.message);
   }

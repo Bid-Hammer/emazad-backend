@@ -2,6 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const { Favorite, userModel, itemModel } = require("../models");
+const { userFavorites, createFavorite } = require("../controller/favoriteController");
 
 // Routes
 router.get("/favorite", getFavorites);
@@ -9,7 +10,7 @@ router.get("/favorite/:id", getFavoriteById);
 router.get("/favoritelist", getFavoriteList);
 router.post("/favorite", createFavorite);
 router.delete("/favorite/:id", deleteFavorite);
-router.get("/userFavorite/:id", getUserFavorites);
+router.get("/userFavorite/:id", userFavorites);
 
 // function to get all favorites ---> not needed
 async function getFavorites(req, res) {
@@ -37,33 +38,6 @@ async function getFavoriteList(req, res) {
   try {
     const favorites = await Favorite.favoriteList(userModel, itemModel);
     res.status(200).json(favorites);
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
-}
-
-// function to get all favorites for a user
-async function getUserFavorites(req, res) {
-  try {
-    const favorites = await Favorite.userFavorites(req.params.id, itemModel);
-    res.status(200).json(favorites);
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
-}
-
-// function to create a favorite
-async function createFavorite(req, res) {
-  try {
-    // user can not add the same item to favorite list more than once
-    const favorites = await Favorite.userFavorites(req.body.userId, itemModel);
-    const isExist = favorites.some((favorite) => favorite.itemId === req.body.itemId);
-    if (isExist) {
-      res.status(400).json({ message: "This item is already in your favorite list" });
-    } else {
-      const favorite = await Favorite.create(req.body);
-      res.status(201).json(favorite);
-    }
   } catch (err) {
     res.status(500).json(err.message);
   }
