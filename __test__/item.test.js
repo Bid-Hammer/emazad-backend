@@ -4,35 +4,28 @@ const server = require('../server');
 const supertest = require('supertest');
 const request = supertest(server.app);
 
-describe('Item Test', () => { 
-//  it('It can create a new item', async () => {
-//     const response = await request.post('/item').send({
-//         itemTitle: "Test Item",
-//         itemDescription: "Test Item Description",
-//         itemCat: "Pets",
-//         userID: 1,
-//         latestBid: 0,
-//         initialPrice: 20,
-//         startDate: "1/1/2022",
-//         endDate: "1/1/2023"
-//  });
-//  expect(response.status).toEqual(201);
-// });
+// testing if the user can create a new item
+describe('Item POST Route Test', () => {
+    it('It can create a new item', async () => {
+        const createItem = await request.post('/item').send({
+            "itemTitle": "item1",
+            "itemDescription": "description1",
+            "category": "category1",
+            "userId": 4,
+            "initialPrice": 10,
+            "latestBid": 1,
+            "status": "new",
+            "startDate": "2021-05-01",
+            "endDate": "2021-05-02",
+            "itemCondition": "new",
+            "subCategory": "Phones"
 
-it('It can get all items', async () => {
-    const response = await request.get('/items');
-    expect(response.status).toEqual(200);
+        });
+        // if the item exists, it will return 200
+        expect(createItem.status).toBe(201);
+     
+    });
+} );
 
-});
 
-it('It can get an item by id', async () => {
-    const response = await request.get('/items/1');
-    expect(response.status).toEqual(200);
-});
-
-// it('It can delete an item by id', async () => {
-//     const response = await request.delete('/items/1');
-//     expect(response.status).toEqual(200);
-// });
-
-});
+// not complete, it is giving me an error since there is no item image uploaded. Fix the default image issue first.

@@ -1,6 +1,7 @@
 "use strict";
 const { Sequelize, DataTypes } = require("sequelize");
 const collection = require("../collection/general-routes");
+require("dotenv").config();
 
 const POSTGRES_URL = process.env.DATABASE_URL || process.env.LOCAL_DATABASE_URL;
 // const sequelizeOption = {
