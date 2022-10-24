@@ -4,36 +4,60 @@ const server = require('../server');
 const supertest = require('supertest');
 const request = supertest(server.app);
 
-describe('Notification Test', () => {
-    describe('Notification Test get Notification', () => {
-        it('test to get all Notifications, should response with 200 status code ', async () => {
-            const response = await request.get('/notif');
-            expect(response.status).toBe(200);
-        });
-        
-        it('test to get one Notification, should response with 200 status code ', async () => {
-            const response = await request.get(`/notif/${1}`);
-            expect(response.status).toBe(200);
-        });
+
+
+describe('Notification', () => {
+    it('should get all notifications', async () => {
+        const response = await request.get('/notif');
+        expect(response.status).toBe(200); 
     });
-    describe('Verify Notification post routs', () => {
-        it('test to create a new Notification, should response with 201 status code ', async () => {
-               const notification = await request.post('/notif').send({
-                "userID": 1,
-                "itemID": 1,
-                "commentID": 1,
-                "bidID": 1,
-                "ratingID": 1,
-                "reportID": 1,
-                "favoriteID": 1,
-                "notiMessage": "New Comment on your item"
-            });
-            expect(notification.status).toBe(201);
-        })
-        it('test to delete notification, should response with 200 status code ', async () => {
-            const delnotification = await request.delete(`/notif/${1}`);
-         expect(delnotification.status).toBe(204);
-     })
-    
-    })
-    })
+    }
+    );
+
+describe('Notification', () => {
+    it('should get one notification by id', async () => {
+        const response = await request.get('/notif/1');
+        expect(response.status).toBe(200);
+    });
+    }
+    );
+
+describe('Notification', () => {
+    it('should get all notifications for one user', async () => {
+        const response = await request.get('/usernotif/1');
+        expect(response.status).toBe(200);
+    });
+    }
+    );
+
+describe('Notification', () => {
+    it('should create a notification', async () => {
+        const response = await request.post('/notif').send({
+        userId: 1,
+        itemId: 1,
+        commentId: 1,
+        replyId: 1,
+        bidId: 1,
+        ratingId: 1,
+        reportId: 1,
+        notiMessage: 'test',
+        status: 'read'
+        });
+        expect(response.status).toBe(201);
+
+    });
+    }
+    );
+
+describe('Notification', () => {
+    it('should delete a notification by id', async () => {
+        const response = await request.delete('/notif/1');
+        expect(response.status).toBe(204);
+    });
+    }
+    );
+
+
+
+   
+
