@@ -8,7 +8,7 @@ let userID;
 let itemID;
 
 describe('Comment Test', () => {
-    it('should create a new comment', async () => {
+    it('should create a new comments', async () => {
     itemID = item.body.id;
 
     const response = await request.post('/comment').send({
