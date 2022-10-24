@@ -21,8 +21,6 @@ const signup = async (req, res) => {
       password: await bcrypt.hash(req.body.password, 10),
     };
 
-
-
     const user = await userModel.create(data);
     if (user) {
 
@@ -39,8 +37,8 @@ const signup = async (req, res) => {
       let mailOptions = {
         from: '"Emazad Contact" <qaisalsgher@gmail.com>',
         to: `${data.email}`,
-        subject: 'Verfication Email',
-        text: 'Welocme to Emazad',
+        subject: 'Verification Email',
+        text: 'Welcome to Emazad',
         html: `<h5>Hello ${data.userName} Plase Verifie Your Email<h5/><br/>
             <a href="http://localhost:8080/verfication/${user.id}">Click Here</a>`, // like for login page in the front end
       };
@@ -50,7 +48,7 @@ const signup = async (req, res) => {
           return console.log(error);
         }
 
-        res.render('contact', { msg: 'Email has been sent' });
+        res.render('contact', { msg: 'Verification Email has been sent!' });
       });
 
       res.status(201).json(user);
@@ -88,7 +86,7 @@ const login = async (req, res) => {
         if (user.confirmed) {
           res.status(200).json(user);
         } else {
-          res.status(400).send("Please Verfie Your Email");
+          res.status(400).send("Please Verify Your Email!");
         }
       } else {
         res.status(403).send("Invalid Login");
@@ -101,8 +99,8 @@ const login = async (req, res) => {
   }
 };
 
-// verfication email is real user or not
-const verfication = async (req, res) => {
+// verification email is real user or not
+const verification = async (req, res) => {
   const user = await userModel.findOne({ where: { id: req.params.id } });
   // console.log(user);
   if (user) {
@@ -251,5 +249,5 @@ module.exports = {
   userSoldItems,
   userWonItems,
   userEngagedItems,
-  verfication,
+  verification,
 };
