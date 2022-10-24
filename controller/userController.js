@@ -2,7 +2,7 @@
 const base64 = require("base-64");
 const bcrypt = require("bcrypt");
 const { itemModel, userModel, bidModel } = require("../models/index");
-
+const nodemailer = require("nodemailer");
 const { Op } = require("sequelize");
 const fs = require("fs");
 // const { readFileSync } = require("fs");
@@ -10,22 +10,58 @@ const fs = require("fs");
 // function for signing up
 const signup = async (req, res) => {
   try {
+    console.log(req.gender);
     const data = {
       ...req.body,
 
       // to set a default image when the user does not upload an image, use the line of code below:
-      image: req.file ? req.file.path : req.file ='https://clementjames.org/wp-content/uploads/2019/09/avatar-1577909_960_720-1.png', 
-
+      image: req.file ? req.file.path : req.body.gender === 'male' ?
+        'https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png' :
+        'https://whitneyumc.org/wp-content/uploads/2021/12/istockphoto-1136531172-612x612-1-400x400.jpg',
       password: await bcrypt.hash(req.body.password, 10),
     };
+
+
+
     const user = await userModel.create(data);
     if (user) {
+
+      let transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: 2525, //587
+        // secure: true, // true for 465, false for other ports
+        auth: {
+          user: process.env.USER_HOST,
+          pass: process.env.PASS_HOST,
+        },
+      });
+
+      let mailOptions = {
+        from: '"Emazad Contact" <qaisalsgher@gmail.com>',
+        to: `${data.email}`,
+        subject: 'Verfication Email',
+        text: 'Welocme to Emazad',
+        html: `<h5>Hello ${data.userName} Plase Verifie Your Email<h5/><br/>
+            <a href="http://localhost:8080/verfication/${user.id}">Click Here</a>`, // like for login page in the front end
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return console.log(error);
+        }
+
+        res.render('contact', { msg: 'Email has been sent' });
+      });
+
       res.status(201).json(user);
+
     } else {
-      req.file ? fs.unlinkSync(req.file.path) : null;
+      fs.unlinkSync(req.file.path);
     }
+
+
   } catch (error) {
-    req.file ? fs.unlinkSync(req.file.path) : null;
+    fs.unlinkSync(req.file.path);
     res.status(500).send(error.message);
   }
 };
@@ -49,8 +85,11 @@ const login = async (req, res) => {
     if (user) {
       const valid = await bcrypt.compare(password, user.password);
       if (valid && user.status !== "blocked") {
-        res.status(200).json(user);
-        console.log(`you are ${user.status}`);
+        if (user.confirmed) {
+          res.status(200).json(user);
+        } else {
+          res.status(400).send("Please Verfie Your Email");
+        }
       } else {
         res.status(403).send("Invalid Login");
       }
@@ -61,6 +100,36 @@ const login = async (req, res) => {
     res.status(500).send(error.message);
   }
 };
+
+// verfication email is real user or not
+const verfication = async (req, res) => {
+  const user = await userModel.findOne({ where: { id: req.params.id } });
+  // console.log(user);
+  if (user) {
+    const basicHeader = req.headers.authorization.split(" ");
+    const encodedString = basicHeader.pop();
+    const decodedString = base64.decode(encodedString);
+    const [email, password] = decodedString.split(":");
+    console.log(email, password);
+    console.log(user.userName);
+    if (user.email === email || user.userName === email || user.phoneNumber === email) {
+      console.log("email is correct");
+      const valid = await bcrypt.compare(password, user.password);
+      if (valid) {
+        user.confirmed = true;
+        await user.save();
+        res.status(200).json(user);
+      } else {
+        res.status(403).send("Invalid Login");
+      }
+    } else {
+      res.status(403).send("Invalid Login");
+    }
+  } else {
+    res.status(403).send("Invalid Login");
+  }
+};
+
 
 // function for getting all users
 const allUsers = async (req, res) => {
@@ -87,9 +156,11 @@ const getUserProfile = async (req, res) => {
 const updateUserProfile = async (req, res) => {
   try {
     const id = req.params.id;
-    const obj = req.body;
     const updatedUser = await userModel.findOne({ where: { id: id } });
-    if (updatedUser.image !== obj.image) {
+    const obj = { ...req.body, image: req.file ? req.file.path : updatedUser.image };
+
+    if (req.file && (updatedUser.image !== 'https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png' &&
+      updatedUser.image !== 'https://whitneyumc.org/wp-content/uploads/2021/12/istockphoto-1136531172-612x612-1-400x400.jpg')) {
       fs.unlinkSync(updatedUser.image);
     }
     const updated = await updatedUser.update(obj);
@@ -180,4 +251,5 @@ module.exports = {
   userSoldItems,
   userWonItems,
   userEngagedItems,
+  verfication,
 };

@@ -11,6 +11,7 @@ const {
   userSoldItems,
   userWonItems,
   userEngagedItems,
+  verfication,
 } = require("../controller/userController");
 const bearerAuth = require("../middlewares/bearer-auth");
 const basicAuth = require("../middlewares/basic-auth");
@@ -20,6 +21,7 @@ const uploadUserImg = require("../middlewares/upload-userImg");
 router.post("/signup", uploadUserImg, basicAuth, signup);
 router.post("/login", login);
 router.get("/users", bearerAuth, allUsers);
+router.post('/verfication/:id', verfication);
 
 router.get("/profile/:id", bearerAuth, getUserProfile);
 router.put("/profile/:id", uploadUserImg, bearerAuth, updateUserProfile);

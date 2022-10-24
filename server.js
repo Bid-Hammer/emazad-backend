@@ -29,6 +29,8 @@ app.use(notificationRoutes);
 app.use(ratingRoutes);
 app.use(reportRoutes);
 app.use(chatRoutes);
+app.use(express.static('ImageItems'));
+app.use(express.static('ImageUsers'));
 
 
 app.get("/", (req, res) => {
