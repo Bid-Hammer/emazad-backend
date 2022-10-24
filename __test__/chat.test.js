@@ -40,7 +40,7 @@ const auth = {};
 
 // create a user before all tests and get the token from it
 beforeAll(async () => {
-    await db.sequelize.sync({ force: true });
+    // await db.sequelize.sync({ force: true });
     const response = await request.post('/signup').send(user1);
     const response2 = await request.post('/signup').send(user2);
 
