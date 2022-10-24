@@ -13,9 +13,8 @@ module.exports = (sequelize, DataTypes) => {
     itemImage: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
-      defaultValue: [
-        "https://www.mub.eps.manchester.ac.uk/ceasblog/wp-content/themes/uom-theme/assets/images/default-thumbnail.jpg",
-      ],
+      defaultValue: ["http://www.sitech.co.id/assets/img/products/default.jpg"]
+      ,
     },
     category: {
       type: DataTypes.ENUM("electronics", "clothes", "realestate", "pets", "vehicles", "others"),

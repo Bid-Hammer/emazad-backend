@@ -76,7 +76,11 @@ const getOneItem = async (req, res) => {
 
 const addItem = async (req, res) => {
   try {
+    console.log(req.files);
     const obj = { ...req.body, itemImage: req.files.map((file) => file.path) };
+    if (req.files.length === 0) {
+      obj.itemImage = ["http://www.sitech.co.id/assets/img/products/default.jpg"]
+    }
     const item = await itemModel.create(obj, fs);
     res.status(201).json(item);
   } catch (err) {
@@ -85,4 +89,40 @@ const addItem = async (req, res) => {
   }
 };
 
-module.exports = { getItems, getOneItem, addItem };
+
+// update item by id and update itemImage if there is a new image and delete the old image if you need
+const updateItem = async (req, res) => {
+  const deletedImages = req.query.deletedImages;
+  console.log(deletedImages);
+  try {
+    const id = req.params.id;
+    const obj = { ...req.body, itemImage: req.files.map((file) => file.path) };
+    const item = await itemModel.findOne({ where: { id: id } });
+    let oldImages = item.itemImage;
+    const newImages = obj.itemImage;
+
+    if (deletedImages) {
+      deletedImages.split(",").map((image) => {
+        if (oldImages.includes(image)) {
+          oldImages = oldImages.filter((oldImage) => oldImage !== image);
+          console.log(image)
+          fs.unlinkSync(image);
+        }
+      });
+    }
+
+    if (newImages.length > 0) {
+      oldImages = [...oldImages, ...newImages];
+      if (oldImages.includes("http://www.sitech.co.id/assets/img/products/default.jpg")) {
+        oldImages = oldImages.filter((oldImage) => oldImage !== "http://www.sitech.co.id/assets/img/products/default.jpg");
+      }
+    }
+    obj.itemImage = oldImages;
+    const updatedItem = await itemModel.update(obj, { where: { id: id } });
+    res.status(200).json(updatedItem);
+  } catch (err) {
+    req.files.map((file) => fs.unlinkSync(file.path));
+    console.log("Error in GeneralRoutes.updateItem: ", err.message);
+  }
+};
+module.exports = { getItems, getOneItem, addItem, updateItem };

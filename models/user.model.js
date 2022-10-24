@@ -22,6 +22,9 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+    }, confirmed: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
     phoneNumber: {
       type: DataTypes.STRING,
@@ -39,9 +42,7 @@ module.exports = (sequelize, DataTypes) => {
     image: {
       type: DataTypes.STRING,
       allowNull: true,
-      defaultValue: "ImageItems/1666368572305_Ahmad-Photo.jpg",
-      // defaultValue: where => {
-      //     gender.toLowerCase().includes('male') ? 'https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png' : 'https://png.pngitem.com/pimgs/s/4-40070_user-staff-man-profile-user-account-icon-jpg.png'
+      defaultValue: "https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png",
     },
     status: {
       type: DataTypes.ENUM("active", "inactive", "blocked"),

@@ -5,7 +5,7 @@ const { Item, Notification, bidModel } = require("../models/index");
 const uploadItemImg = require("../middlewares/upload-itemImg");
 const fs = require("fs");
 
-const { getItems, getOneItem, addItem } = require("../controller/itemController");
+const { getItems, getOneItem, addItem, updateItem } = require("../controller/itemController");
 
 // Routes
 router.post("/item", uploadItemImg, addItem);
@@ -20,13 +20,6 @@ router.get("/items/:status/:category", getItems);
 router.get("/items/:status/:category/:subCategory", getItems);
 router.get("/item/:id", getOneItem);
 
-// function to update an item by id
-async function updateItem(req, res) {
-  const id = req.params.id;
-  const obj = req.body;
-  const updatedItem = await Item.update(id, obj);
-  res.status(200).json(updatedItem);
-}
 
 // function to delete an item by id
 async function deleteItem(req, res) {
