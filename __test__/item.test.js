@@ -42,14 +42,14 @@ const item1 = {
 
 // create a user before all tests and get the token from it
 beforeAll(async () => {
-    await db.sequelize.sync({ force: true });
+    // await db.sequelize.sync({ force: true });
     const response = await request.post('/signup').send(user1);
     auth.token = response.body.token;
 });
 
 
 // testing if the user can create a new item
-describe('Item POST Route Test', () => {
+xdescribe('Item POST Route Test', () => {
     it('It can create a new item', async () => {
         const createItem = await request.post('/item').send(item1);
         // if the item exists, it will return 200

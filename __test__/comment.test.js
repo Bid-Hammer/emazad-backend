@@ -4,17 +4,16 @@ const server = require('../server');
 const supertest = require('supertest');
 const request = supertest(server.app);
 
-let userID;
-let itemID;
+let userId;
+let itemId;
 
 describe('Comment Test', () => {
     it('should create a new comments', async () => {
-    itemID = item.body.id;
 
     const response = await request.post('/comment').send({
-        "comment": "testComment",
-        "userID": 1,
-        "itemID": 1
+        comment: "testComment",
+        userId: 1,
+        itemId: 1
     });
     expect(response.status).toEqual(201);
   

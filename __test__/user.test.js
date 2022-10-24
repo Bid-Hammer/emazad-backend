@@ -24,10 +24,15 @@ const auth = {};
 
 // create a user before all tests and get the token from it
 beforeAll(async () => {
-    await db.sequelize.sync({ force: true });
+    // await db.sequelize.sync({ force: true });
     const response = await request.post('/signup').send(user1);
     auth.token = response.body.token;
 });
+
+// after all tests are done, clear the database
+// afterAll(async () => {
+//     await db.sequelize.sync({ force: true });
+// });
 
 describe('User Tests', () => {
 
@@ -276,5 +281,6 @@ describe('User Tests', () => {
         expect(response.status).toEqual(403);
         expect(response.text).toEqual('Invalid Login');
     });
+
 
 });
