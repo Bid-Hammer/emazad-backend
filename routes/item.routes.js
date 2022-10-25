@@ -44,7 +44,6 @@ setInterval(async () => {
   try {
     const currentDate = new Date();
     const items = await Item.read();
-    // console.log(currentDate);
 
     items.map(async (item) => {
       // change status from standby to active when the start date is reached

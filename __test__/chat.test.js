@@ -4,6 +4,7 @@ const server = require('../server');
 const supertest = require('supertest');
 const request = supertest(server.app);
 
+
 require('dotenv').config();
 const db = require('../models');
 
@@ -44,15 +45,14 @@ beforeAll(async () => {
     const response = await request.post('/signup').send(user1);
     const response2 = await request.post('/signup').send(user2);
 
-    const token1= auth.token = response.body.token;
+    const token1 = auth.token = response.body.token;
     const token2 = auth.token = response2.body.token;
 
 });
 
 
-
-describe('Chat Test', () => {
-    it( 'should create a new chat', async () => {
+xdescribe('Chat Test', () => {
+    it('should create a new chat', async () => {
         const response = await request.post('/chat').send({
             "senderId": 1,
             "message": "This is a message",

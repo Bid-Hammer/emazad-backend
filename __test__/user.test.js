@@ -3,9 +3,8 @@
 const server = require('../server');
 const supertest = require('supertest');
 const request = supertest(server.app);
-
-require('dotenv').config();
 const db = require('../models');
+require('dotenv').config();
 
 const user1 = {
     userName: 'user1',
@@ -23,11 +22,11 @@ const user1 = {
 const auth = {};
 
 // create a user before all tests and get the token from it
-beforeAll(async () => {
-    // await db.sequelize.sync({ force: true });
-    const response = await request.post('/signup').send(user1);
-    auth.token = response.body.token;
-});
+// beforeAll(async () => {
+//     await db.sequelize.sync({ force: true });
+//     const response = await request.post('/signup').send(user1);
+//     auth.token = response.body.token;
+// });
 
 // after all tests are done, clear the database
 // afterAll(async () => {
@@ -39,7 +38,7 @@ describe('User Tests', () => {
     // testing the signup route --works only once
     it('should create a new user', async () => {
 
-        const user2 = {...user1, userName: 'user2', fullName: 'user2', email: 'user2@test.com', phoneNumber: '222'};
+        const user2 = { ...user1, userName: 'user2', fullName: 'user2', email: 'user2@test.com', phoneNumber: '222' };
         const response = await request.post('/signup').send(user2);
         expect(response.status).toEqual(201);
         expect(response.body.userName).toEqual('user2');
@@ -54,7 +53,7 @@ describe('User Tests', () => {
 
     // testing the signup route with an existing username
     it('should not create a new user with existing username', async () => {
-    
+
         const response = await request.post('/signup').send(user1);
         expect(response.status).toEqual(409);
         expect(response.text).toEqual('Username already exists');
@@ -63,7 +62,7 @@ describe('User Tests', () => {
     // testing the signup route with an existing email
     it('should not create a new user with existing email', async () => {
 
-        const user = {...user1, userName: 'userTest', phoneNumber: '123123'};
+        const user = { ...user1, userName: 'userTest', phoneNumber: '123123' };
 
         const response = await request.post('/signup').send(user);
         expect(response.status).toEqual(409);
@@ -73,7 +72,7 @@ describe('User Tests', () => {
     // testing the signup route with an existing phone number
     it('should not create a new user with existing phone number', async () => {
 
-        const user = {...user1, userName: 'user3', email: 'user3@test.com'};
+        const user = { ...user1, userName: 'user3', email: 'user3@test.com' };
 
         const response = await request.post('/signup').send(user);
         expect(response.status).toEqual(409);
@@ -94,7 +93,7 @@ describe('User Tests', () => {
         const response = await request.post('/verification/1').auth('user1', '123');
         expect(response.status).toEqual(200);
     });
-    
+
     // testing the login route
     it('should login an active user', async () => {
 
@@ -113,7 +112,7 @@ describe('User Tests', () => {
     // testing the login route with a blocked user
     it('should not login a blocked user', async () => {
 
-        const user = {...user1, userName: 'user3', email: 'user3@test.com', phoneNumber: '333', status: 'blocked'};
+        const user = { ...user1, userName: 'user3', email: 'user3@test.com', phoneNumber: '333', status: 'blocked' };
         await request.post('/signup').send(user);
         const response = await request.post('/login').auth('user3', '123');
         expect(response.status).toEqual(403);
@@ -127,10 +126,10 @@ describe('User Tests', () => {
         expect(response.status).toEqual(403);
         expect(response.text).toEqual('Invalid Login');
     });
-    
+
     // testing the login route with a wrong password
     it('should not login a user with a wrong password', async () => {
-            
+
         const response = await request.post('/login').auth('user1', '1234');
         expect(response.status).toEqual(403);
         expect(response.text).toEqual('Invalid Login');
@@ -138,7 +137,7 @@ describe('User Tests', () => {
 
     // testing the get all users route without token
     it('should not get all users without a token', async () => {
-            
+
         const response = await request.get('/users').set('Authorization', `Bearer`);
         expect(response.status).toEqual(500);
     });
@@ -157,12 +156,12 @@ describe('User Tests', () => {
         const response = await request.get('/profile/1').set('Authorization', `Bearer ${auth.token}`);
         expect(response.status).toEqual(200);
         expect(response.body.userName).toEqual('user1');
-    });   
-    
+    });
+
     // testing updating the profile in the profile route with token from the beforeAll function
     it('should update the profile of a user with a token', async () => {
 
-        const updatedUser = {...user1, userName: 'updatedUser'};
+        const updatedUser = { ...user1, userName: 'updatedUser' };
         const response = await request.put('/profile/1').set('Authorization', `Bearer ${auth.token}`).send(updatedUser);
         expect(response.status).toEqual(202);
         expect(response.body.userName).toEqual('updatedUser');
@@ -170,7 +169,7 @@ describe('User Tests', () => {
 
     // testing getting the userActiveItems route with token from the beforeAll function
     it('should get the active items of a user with a token', async () => {
-            
+
         const response = await request.get('/userActiveItems/1').set('Authorization', `Bearer ${auth.token}`);
         expect(response.status).toEqual(200);
         expect(response.body.length).toEqual(0);
@@ -178,7 +177,7 @@ describe('User Tests', () => {
 
     // testing getting the userStandbyItems route with token from the beforeAll function
     it('should get the standby items of a user with a token', async () => {
-                
+
         const response = await request.get('/userStandbyItems/1').set('Authorization', `Bearer ${auth.token}`);
         expect(response.status).toEqual(200);
         expect(response.body.length).toEqual(0);
@@ -186,7 +185,7 @@ describe('User Tests', () => {
 
     // testing getting the userSoldItems route with token from the beforeAll function
     it('should get the sold items of a user with a token', async () => {
-                        
+
         const response = await request.get('/userSoldItems/1').set('Authorization', `Bearer ${auth.token}`);
         expect(response.status).toEqual(200);
         expect(response.body.length).toEqual(0);
@@ -194,7 +193,7 @@ describe('User Tests', () => {
 
     // testing getting the userWonItems route with token from the beforeAll function
     it('should get the won items of a user with a token', async () => {
-                                
+
         const response = await request.get('/userWonItems/1').set('Authorization', `Bearer ${auth.token}`);
         expect(response.status).toEqual(200);
         expect(response.body.length).toEqual(0);
@@ -213,7 +212,7 @@ describe('User Tests', () => {
 
     // testing getting error 500 when trying to logging in with a wrong data type
     it('should get server error (500) when trying to login without any data', async () => {
-                                                
+
         const response = await request.post('/login');
         expect(response.status).toEqual(500);
     });
@@ -272,7 +271,7 @@ describe('User Tests', () => {
 
         const response = await request.get('/profile/').set('Authorization', `Bearer ${auth.token}`);
         expect(response.status).toEqual(404);
-    });  
+    });
 
     // testing getting error 403 when trying to verify a user with a wrong email and password
     it('should get forbidden error (403) when trying to verify a user with a wrong email and password', async () => {
