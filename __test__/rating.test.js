@@ -5,37 +5,37 @@ const supertest = require("supertest");
 const db = require("../models");
 const request = supertest(server.app);
 
-const user1 = {
-  userName: "userRating",
-  fullName: "userRating",
-  email: "userRating@test.com",
-  password: "123",
-  phoneNumber: "1",
-  gender: "male",
-  birthDate: "1994-10-26",
-  image: "https://clementjames.org/wp-content/uploads/2019/09/avatar-1577909_960_720-1.png",
-  status: "active",
-  role: "user",
-};
-
-const user2 = {...user1, userName: "userRating2", email: "userRating2@test.com, phoneNumber: 2"};
-const user3 = {...user1, userName: "userRating3", email: "userRating3@test.com, phoneNumber: 3"};
-const user4 = {...user1, userName: "userRating4", email: "userRating4@test.com, phoneNumber: 4"};
-
-const user = {};
-const ratedUser = {};
-const user3test = {};
-const user4test = {};
-
-beforeAll(async () => {
-  // await db.sequelize.sync({ force: true });
-  user.data = await request.post("/signup").send(user1);
-  ratedUser.data = await request.post("/signup").send(user2);
-  user3test.data = await request.post("/signup").send(user3);
-  user4test.data = await request.post("/signup").send(user4);
-});
 
 describe("Rating Test", () => {
+  const user1 = {
+    userName: "userRating",
+    fullName: "userRating",
+    email: "userRating@test.com",
+    password: "123",
+    phoneNumber: "6",
+    gender: "male",
+    birthDate: "1994-10-26",
+    image: "https://clementjames.org/wp-content/uploads/2019/09/avatar-1577909_960_720-1.png",
+    status: "active",
+    role: "user",
+  };
+  
+  const user2 = {...user1, userName: "userRating2", email: "userRating2@test.com", phoneNumber: "66"};
+  const user3 = {...user1, userName: "userRating3", email: "userRating3@test.com", phoneNumber: "666"};
+  const user4 = {...user1, userName: "userRating4", email: "userRating4@test.com", phoneNumber: "6666"};
+  
+  const user = {};
+  const ratedUser = {};
+  const user3test = {};
+  const user4test = {};
+  
+  beforeAll(async () => {
+    user.data = await request.post("/signup").send(user1);
+    ratedUser.data = await request.post("/signup").send(user2);
+    user3test.data = await request.post("/signup").send(user3);
+    user4test.data = await request.post("/signup").send(user4);
+  });
+
   it("test to get all Ratings", async () => {
     const response = await request.get("/rating");
     expect(response.status).toBe(200);
@@ -103,9 +103,7 @@ describe("Rating Test", () => {
     const rating = await request.get("/rating/1/1");
     expect(rating.status).toBe(404);
   });
-});
 
-describe("Rating Test2", () => {
   it("test to get error 400 when you try to rate yourself", async () => {
     const rating = await request.post("/rating").send({
       rating: 1,
@@ -114,4 +112,6 @@ describe("Rating Test2", () => {
     });
     expect(rating.status).toBe(400);
   });
+
 });
+
