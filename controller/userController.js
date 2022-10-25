@@ -10,7 +10,6 @@ const fs = require("fs");
 // function for signing up
 const signup = async (req, res) => {
   try {
-    console.log(req.gender);
     const data = {
       ...req.body,
 
@@ -102,16 +101,14 @@ const login = async (req, res) => {
 // verification email is real user or not
 const verification = async (req, res) => {
   const user = await userModel.findOne({ where: { id: req.params.id } });
-  // console.log(user);
   if (user) {
     const basicHeader = req.headers.authorization.split(" ");
     const encodedString = basicHeader.pop();
     const decodedString = base64.decode(encodedString);
     const [email, password] = decodedString.split(":");
-    console.log(email, password);
-    console.log(user.userName);
+
     if (user.email === email || user.userName === email || user.phoneNumber === email) {
-      console.log("email is correct");
+
       const valid = await bcrypt.compare(password, user.password);
       if (valid) {
         user.confirmed = true;

@@ -7,7 +7,7 @@ const request = supertest(server.app);
 let userID;
 let itemID;
 
-describe('Comment Test', () => {
+xdescribe('Comment Test', () => {
     it('should create a new comment', async () => {
     // create a user and an item to test the comment
 

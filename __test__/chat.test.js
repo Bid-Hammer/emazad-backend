@@ -4,7 +4,7 @@ const server = require('../server');
 const supertest = require('supertest');
 const request = supertest(server.app);
 
-describe('Chat Test', () => {
+xdescribe('Chat Test', () => {
     it( 'should create a new chat', async () => {
         const response = await request.post('/chat').send({
             "senderId": 1,

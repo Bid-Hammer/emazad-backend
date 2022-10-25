@@ -7,7 +7,6 @@ const basicAuth = async (req, res, next) => {
 
   try {
 
-    console.log(req.body.phoneNumber);
     if (isNaN(req.body.phoneNumber)) {
 
       res.status(400).json({ message: 'phone number must contain only numbers' });

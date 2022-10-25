@@ -4,7 +4,7 @@ const server = require('../server');
 const supertest = require('supertest');
 const request = supertest(server.app);
 
-describe('Favorite Test', () => {
+xdescribe('Favorite Test', () => {
   describe('Favorite Test get Favorites', () => {
       it('test to get all Favorites, should response with 200 status code ', async () => {
           const response = await request.get('/favorite');

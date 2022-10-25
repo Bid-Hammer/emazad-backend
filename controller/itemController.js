@@ -2,6 +2,7 @@
 
 const { itemModel, userModel, bidModel, commentModel, replyModel } = require("../models/index");
 const fs = require("fs");
+const console = require("console");
 
 const getItems = async (req, res) => {
   try {
@@ -74,18 +75,27 @@ const getOneItem = async (req, res) => {
   }
 };
 
+
 const addItem = async (req, res) => {
   try {
-    const obj = { ...req.body, itemImage: req.files.map((file) => file.path) };
-    if (req.files.length === 0) {
-      obj.itemImage = ["http://www.sitech.co.id/assets/img/products/default.jpg"]
+    if (!req.body.itemImage) {
+
+      const obj = { ...req.body, itemImage: req.files.map((file) => file.path) };
+
+      if (req.files.length === 0) {
+        obj.itemImage = ["http://www.sitech.co.id/assets/img/products/default.jpg"]
+      }
+
+      const item = await itemModel.create(obj, fs);
+      res.status(201).json(item);
+
+    } else {
+      const item = await itemModel.create(req.body);
+      res.status(201).json(item);
     }
 
-    
-    const item = await itemModel.create(obj, fs);
-    res.status(201).json(item);
   } catch (err) {
-    // req.files.map((file) => fs.unlinkSync(file.path));
+    req.files.map((file) => fs.unlinkSync(file.path));
     console.log("Error in GeneralRoutes.addItem: ", err.message);
   }
 };
@@ -97,11 +107,21 @@ const updateItem = async (req, res) => {
   console.log(deletedImages);
   try {
     const id = req.params.id;
-    const obj = { ...req.body, itemImage: req.files.map((file) => file.path) };
-    const item = await itemModel.findOne({ where: { id: id } });
-    let oldImages = item.itemImage;
-    const newImages = obj.itemImage;
-
+    let item = null;
+    let oldImages = null;
+    let newImages = null;
+    let obj = null;
+    if (!req.body.itemImage) {
+      obj = { ...req.body, itemImage: req.files.map((file) => file.path) };
+      item = await itemModel.findOne({ where: { id: id } });
+      oldImages = item.itemImage;
+      newImages = obj.itemImage;
+    } else {
+      obj = req.body
+      item = await itemModel.findOne({ where: { id: id } });
+      oldImages = item.itemImage;
+      newImages = obj.itemImage;
+    }
     if (deletedImages) {
       deletedImages.split(",").map((image) => {
         if (oldImages.includes(image)) {

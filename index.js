@@ -9,7 +9,7 @@ const db = require("./models/index").sequelize;
 //   })
 //   .catch(console.error);
 
-// force to drob table and create new one
+// force to drob table and create new 
 
 db.sync({ force: true })
   .then(() => {

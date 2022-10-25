@@ -17,14 +17,14 @@ const sequelizeOption = {};
 let sequelize = new Sequelize(POSTGRES_URL, sequelizeOption);
 
 // checking if the connection is established or not to the database (extra)
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log("Database Connected to postgres");
-  })
-  .catch((error) => {
-    console.log(error);
-  });
+// sequelize
+//   .authenticate()
+//   .then(() => {
+//     console.log("Database Connected to postgres");
+//   })
+//   .catch((error) => {
+//     console.log(error);
+//   });
 
 // Models
 const db = {};
