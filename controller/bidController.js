@@ -13,7 +13,7 @@ const createBid = async (req, res) => {
     }
     // check if the item is already sold
     if (item.status === "sold" || item.status === "expired") {
-      return res.status(400).json({ message: "This item is already sold" });
+      return res.status(400).json({ message: "This item was already sold" });
     }
     // check if the user is the owner of the item
     if (Number(obj.userId) === item.userId) {

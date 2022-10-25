@@ -9,7 +9,7 @@ const basicAuth = async (req, res, next) => {
 
     if (isNaN(req.body.phoneNumber)) {
 
-      res.status(400).json({ message: 'phone number must contain only numbers' });
+      res.status(400).json({ message: 'Phone number must contain only numbers' });
 
     } else if (!req.body.email.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,3}$/)) {
 
