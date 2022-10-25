@@ -7,7 +7,6 @@ const { userFavorites, createFavorite } = require("../controller/favoriteControl
 // Routes
 router.get("/favorite", getFavorites);
 router.get("/favorite/:id", getFavoriteById);
-router.get("/favoritelist", getFavoriteList);
 router.post("/favorite", createFavorite);
 router.delete("/favorite/:id", deleteFavorite);
 router.get("/userFavorite/:id", userFavorites);
@@ -28,16 +27,6 @@ async function getFavoriteById(req, res) {
     const id = req.params.id;
     const favorite = await Favorite.read(id);
     res.status(200).json(favorite);
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
-}
-
-// function to get all the favorite list for a all users that have at least one favorite with the item details ---> not needed
-async function getFavoriteList(req, res) {
-  try {
-    const favorites = await Favorite.favoriteList(userModel, itemModel);
-    res.status(200).json(favorites);
   } catch (err) {
     res.status(500).json(err.message);
   }

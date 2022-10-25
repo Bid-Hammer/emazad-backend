@@ -140,7 +140,7 @@ const updateItem = async (req, res) => {
     }
     obj.itemImage = oldImages;
     const updatedItem = await itemModel.update(obj, { where: { id: id } });
-    res.status(200).json(updatedItem);
+    res.status(202).json(updatedItem);
   } catch (err) {
     req.files.map((file) => fs.unlinkSync(file.path));
     console.log("Error in GeneralRoutes.updateItem: ", err.message);

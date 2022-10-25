@@ -53,7 +53,7 @@ async function deleteReply(req, res) {
   try {
     const id = req.params.id;
     const reply = await Reply.delete(id);
-    res.status(202).json(reply);
+    res.status(204).json(reply);
   } catch (err) {
     res.status(500).json(err.message);
   }

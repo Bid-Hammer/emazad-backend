@@ -4,9 +4,7 @@ const server = require("../server");
 const supertest = require("supertest");
 const request = supertest(server.app);
 
-
-
-xdescribe('Report', () => {
+describe('Report Test', () => {
     it('should create a report', async () => {
         const response = await request.post('/report').send({
             reportTitle: "report title",
@@ -17,7 +15,6 @@ xdescribe('Report', () => {
         });
         expect(response.status).toBe(201);
     });
-    expect(response.status).toBe(201);
 
     it("should get all reports", async () => {
         const response = await request.get("/report");

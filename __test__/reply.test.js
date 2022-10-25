@@ -7,15 +7,16 @@ const request = supertest(server.app);
 describe("Comment Test", () => {
   const users = {};
   const items = {};
+  const comments = {};
 
   beforeAll(async () => {
     // create a user before all tests and get the token from it
     const user1 = {
-      userName: "userComment1",
-      fullName: "userComment1",
-      email: "userComment1@test.com",
+      userName: "userReply1",
+      fullName: "userReply1",
+      email: "userReply1@test.com",
       password: "123",
-      phoneNumber: "33333333",
+      phoneNumber: "323212",
       gender: "male",
       birthDate: "1994-10-26",
       image: "https://clementjames.org/wp-content/uploads/2019/09/avatar-1577909_960_720-1.png",
@@ -23,7 +24,7 @@ describe("Comment Test", () => {
       role: "user",
     };
 
-    const user2 = { ...user1, userName: "userComment2", email: "userComment2@test.com", phoneNumber: "44444444" };
+    const user2 = { ...user1, userName: "userReply2", email: "userReply2@test.com", phoneNumber: "12123232" };
 
     const response = await request.post("/signup").send(user1);
     const response2 = await request.post("/signup").send(user2);
@@ -51,36 +52,48 @@ describe("Comment Test", () => {
     const itemTwo = await request.post("/item").send(item2);
     items.item1 = itemOne.body;
     items.item2 = itemTwo.body;
-  });
 
-  it("should create a new comment", async () => {
     const comment1 = {
-      userId: users.user1.id,
-      itemId: items.item1.id,
-      comment: "test comment 1",
+        userId: users.user1.id,
+        itemId: items.item1.id,
+        comment: "test comment 1",
     };
 
-    const response = await request.post("/comment").send(comment1);
-    expect(response.status).toEqual(201);
-    expect(response.body.comment).toEqual(comment1.comment);
+    const commentResponse = await request.post("/comment").send(comment1);
+    comments.comment1 = commentResponse.body;
+
   });
 
-  it("should get all comments", async () => {
-    const response = await request.get("/comment");
-    expect(response.status).toEqual(200);
-  });
+    it("should create a new reply", async () => {
+        const reply1 = {
+            userId: users.user1.id,
+            commentId: comments.comment1.id,
+            reply: "test reply 1",
+        };
 
-  it("should update a comment", async () => {
-    const updateResponse = await request.put(`/comment/1`).send({
-      userId: users.user1.id,
-      itemId: items.item1.id,
-      comment: "updated comment",
+        const response = await request.post("/reply").send(reply1);
+        expect(response.status).toEqual(201);
     });
-    expect(updateResponse.status).toEqual(202);
-  });
 
-  it("should delete a comment", async () => {
-    const deleteResponse = await request.delete(`/comment/1`);
-    expect(deleteResponse.status).toEqual(204);
-  });
+    it("should get all replies", async () => {
+        const response = await request.get("/reply");
+        expect(response.status).toEqual(200);
+    });
+
+    it("should update a reply", async () => {
+        const reply1 = {
+            userId: users.user1.id,
+            commentId: comments.comment1.id,
+            reply: "updated reply",
+        };
+
+        const response = await request.put("/reply/1").send(reply1);
+        expect(response.status).toEqual(202);
+    });
+
+    it("should delete a reply", async () => {
+        const response = await request.delete("/reply/1");
+        expect(response.status).toEqual(204);
+    });
+    
 });
