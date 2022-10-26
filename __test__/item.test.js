@@ -34,7 +34,7 @@ describe("Item Test", () => {
     const item1 = {
       itemTitle: "item1",
       itemDescription: "item1",
-      itemImage: ["https://clementjames.org/wp-content/uploads/2019/09/avatar-1577909_960_720-1.png"],
+      itemImage: ["ImageItems/1666785671592_Artistic-Landscape-4K-Wallpaper-3840x2160.jpg"],
       category: "clothes",
       userId: users.user1.id,
       latestBid: 5,

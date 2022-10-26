@@ -88,6 +88,6 @@ setInterval(async () => {
   }
 
   // setting the interval to 1 minute
-}, 10000);
+}, 1000000);
 
 module.exports = router;

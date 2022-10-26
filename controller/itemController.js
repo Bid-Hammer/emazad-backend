@@ -126,7 +126,6 @@ const updateItem = async (req, res) => {
       deletedImages.split(",").map((image) => {
         if (oldImages.includes(image)) {
           oldImages = oldImages.filter((oldImage) => oldImage !== image);
-          console.log(image)
           fs.unlinkSync(image);
         }
       });

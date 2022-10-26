@@ -12,12 +12,13 @@ const createRating = async (req, res) => {
       where: { userId: req.body.userId, ratedId: req.body.ratedId },
     });
     if (user.id === ratedUser.id) {
-      res.status(400).json({ message: `You can't rate yourself` });
+      return res.status(400).json({ message: `You can't rate yourself` });
     }
     if (rating) {
-      res.status(400).json({ message: `You already rated this user` });
+      return res.status(400).json({ message: `You already rated this user` });
     }
-    res.status(201).json(await ratingModel.create(req.body));
+    const newRating = await ratingModel.create(req.body);
+    res.status(201).json(newRating);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
