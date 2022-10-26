@@ -190,13 +190,6 @@ describe("Bid & Notification Tests", () => {
     expect(response.status).toEqual(200);
   });
 
-  // update nofication
-  it("update nofication to read", async () => {
-    const response = await request.put(`/notif/${users.user1.id}`);
-    // .set('Authorization', `Bearer ${users.user1.token}`);
-    expect(response.status).toEqual(202);
-  });
-
   // ERROR 500 update nofication
   it("update nofication", async () => {
     const response = await request.put("/notif/5.5");
@@ -213,13 +206,22 @@ describe("Bid & Notification Tests", () => {
   });
 
   // create nofication
+  let notifId;
   it("create nofication", async () => {
     const response = await request.post("/notif").send({
-      userID: users.user1.id,
-      itemID: items.item1.id,
+      userId: users.user1.id,
+      itemId: items.item1.id,
       notiMessage: "bla bla",
       status: "unread",
     });
+    notifId = response.body.id;
     expect(response.status).toEqual(201);
+  });
+
+  // update nofication
+  it("update nofication to read", async () => {
+    const response = await request.put(`/notif/${notifId}`)
+    // .set('Authorization', `Bearer ${users.user1.token}`);
+    expect(response.status).toEqual(202);
   });
 });

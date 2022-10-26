@@ -116,7 +116,7 @@ describe("User Test", () => {
 
   // testing the get all users route without token
   it("should not get all users without a token", async () => {
-    const response = await request.get("/users").set("Authorization", `Bearer`);
+    const response = await request.get("/users");
     expect(response.status).toEqual(500);
   });
 

@@ -5,6 +5,7 @@ const User = require("../models").userModel;
 const bearerAuth = async (req, res, next) => {
   try {
     if (!req.headers.authorization) {
+      // res.status(500).send("Invalid Login");
       next("Invalid Login");
     }
     const token = req.headers.authorization.split(" ").pop();
