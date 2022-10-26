@@ -22,7 +22,7 @@ const createFavorite = async (req, res) => {
     });
     const isExist = favorites.some((favorite) => favorite.itemId === req.body.itemId);
     if (isExist) {
-      res.status(400).json("Item already exist in favorite list");
+      res.status(400).json("The item already exists in favorite list");
     } else {
       const favorite = await favoriteModel.create(req.body);
       res.status(201).json(favorite);

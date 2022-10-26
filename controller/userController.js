@@ -46,8 +46,7 @@ const signup = async (req, res) => {
         if (error) {
           return res.status(400).json(error)
         }
-
-        return res.render('contact', { msg: 'Verification Email has been sent!' });
+        res.render('contact', { msg: 'Verification Email has been sent!' });
       });
 
       return res.status(201).json(user);

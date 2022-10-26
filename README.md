@@ -23,7 +23,7 @@ Auction Web Application Backend built using JavaScript, Node JS, Express JS, Seq
 1. ~~Admin Routes and everything~~
 1. ~~Notifications for comments ( the item owner only )~~
 1. ~~Item routes~~
-1. Test units --50%
+1. ~~Test units --50%~~
 1. Payment (Stretch)
 1. Chat system (socket.io) (Stretch)
 
