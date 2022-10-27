@@ -25,9 +25,12 @@ router.get("/item/:id", getOneItem);
 async function deleteItem(req, res) {
   const id = req.params.id;
   const itemDeleted = await Item.read(id);
-  itemDeleted.itemImage.map((path) => {
-    fs.unlinkSync(path);
-  });
+  console.log(itemDeleted.itemImage);
+  if (!itemDeleted.itemImage[0].startsWith("http")) {
+    itemDeleted.itemImage.map((path) => {
+      fs.unlinkSync(path);
+    });
+  }
   let deletedItem = await Item.delete(id);
   res.status(204).json({ deletedItem });
 }

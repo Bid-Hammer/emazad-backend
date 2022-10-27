@@ -128,7 +128,7 @@ describe("Bid & Notification Tests", () => {
       })
       .set("Authorization", `Bearer ${users.user1.token}`);
     expect(response.status).toEqual(400);
-    expect(response.body.message).toEqual("This item is already sold");
+    expect(response.body.message).toEqual('This item was already sold');
   });
   // bid for item expired
   it("bid for item expired", async () => {
@@ -141,7 +141,7 @@ describe("Bid & Notification Tests", () => {
       })
       .set("Authorization", `Bearer ${users.user1.token}`);
     expect(response.status).toEqual(400);
-    expect(response.body.message).toEqual("This item is already sold");
+    expect(response.body.message).toEqual('This item was already sold');
   });
 
   // bid for standby item

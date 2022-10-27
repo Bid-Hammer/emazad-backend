@@ -23,7 +23,7 @@ describe("Item Test", () => {
       phoneNumber: "5",
       gender: "male",
       birthDate: "1994-10-26",
-      image: "https://clementjames.org/wp-content/uploads/2019/09/avatar-1577909_960_720-1.png",
+      image: ["https://clementjames.org/wp-content/uploads/2019/09/avatar-1577909_960_720-1.png"],
       status: "active",
       role: "user",
     };
@@ -34,12 +34,12 @@ describe("Item Test", () => {
     const item1 = {
       itemTitle: "item1",
       itemDescription: "item1",
-      itemImage: ["ImageItems/1666785671592_Artistic-Landscape-4K-Wallpaper-3840x2160.jpg"],
+      itemImage: ["https://clementjames.org/wp-content/uploads/2019/09/avatar-1577909_960_720-1.png"],
       category: "clothes",
       userId: users.user1.id,
       latestBid: 5,
       initialPrice: 10,
-      startDate: "2021-10-26T00:00:00.000Z",
+      startDate: "2020-09-26T00:00:00.000Z",
       endDate: "2025-10-26T00:00:00.000Z",
       status: "active",
       subCategory: "shoes",
@@ -58,16 +58,16 @@ describe("Item Test", () => {
     const response = await request.post("/item").send(items.qais);
     // .set('Authorization', `Bearer ${auth.token}`);
     expect(response.status).toEqual(201);
-    // expect(response.body.itemTitle).toEqual(item1.itemTitle);
-    // expect(response.body.itemDescription).toEqual(item1.itemDescription);
-    // expect(response.body.category).toEqual(item1.category);
-    // expect(response.body.latestBid).toEqual(item1.latestBid);
-    // expect(response.body.initialPrice).toEqual(item1.initialPrice);
-    // expect(response.body.startDate).toEqual(item1.startDate);
-    // expect(response.body.endDate).toEqual(item1.endDate);
-    // expect(response.body.status).toEqual(item1.status);
-    // expect(response.body.subCategory).toEqual(item1.subCategory);
-    // expect(response.body.itemCondition).toEqual(item1.itemCondition);
+    expect(response.body.itemTitle).toEqual(items.qais.itemTitle);
+    expect(response.body.itemDescription).toEqual(items.qais.itemDescription);
+    expect(response.body.category).toEqual(items.qais.category);
+    expect(response.body.latestBid).toEqual(items.qais.latestBid);
+    expect(response.body.initialPrice).toEqual(items.qais.initialPrice);
+    expect(response.body.startDate).toEqual(items.qais.startDate);
+    expect(response.body.endDate).toEqual(items.qais.endDate);
+    expect(response.body.status).toEqual(items.qais.status);
+    expect(response.body.subCategory).toEqual(items.qais.subCategory);
+    expect(response.body.itemCondition).toEqual(items.qais.itemCondition);
   });
 
   // create new item item2
@@ -80,16 +80,16 @@ describe("Item Test", () => {
   it("should get one item", async () => {
     const response = await request.get(`/item/${items.item1.id}`);
     expect(response.status).toEqual(200);
-    // expect(response.body.itemTitle).toEqual(item1.itemTitle);
-    // expect(response.body.itemDescription).toEqual(item1.itemDescription);
-    // expect(response.body.category).toEqual(item1.category);
-    // expect(response.body.latestBid).toEqual(item1.latestBid);
-    // expect(response.body.initialPrice).toEqual(item1.initialPrice);
-    // expect(response.body.startDate).toEqual(item1.startDate);
-    // expect(response.body.endDate).toEqual(item1.endDate);
-    // expect(response.body.status).toEqual(item1.status);
-    // expect(response.body.subCategory).toEqual(item1.subCategory);
-    // expect(response.body.itemCondition).toEqual(item1.itemCondition);
+    expect(response.body.itemTitle).toEqual(items.qais.itemTitle);
+    expect(response.body.itemDescription).toEqual(items.qais.itemDescription);
+    expect(response.body.category).toEqual(items.qais.category);
+    expect(response.body.latestBid).toEqual(items.qais.latestBid);
+    expect(response.body.initialPrice).toEqual(items.qais.initialPrice);
+    expect(response.body.startDate).toEqual(items.qais.startDate);
+    expect(response.body.endDate).toEqual(items.qais.endDate);
+    expect(response.body.status).toEqual(items.qais.status);
+    expect(response.body.subCategory).toEqual(items.qais.subCategory);
+    expect(response.body.itemCondition).toEqual(items.qais.itemCondition);
   });
 
   // test hiding an item by id
@@ -151,16 +151,16 @@ describe("Item Test", () => {
   it("should get one item", async () => {
     const response = await request.get(`/item/${items.item1.id}`);
     expect(response.status).toEqual(200);
-    // expect(response.body.itemTitle).toEqual(item2.itemTitle);
-    // expect(response.body.itemDescription).toEqual(item2.itemDescription);
-    // expect(response.body.category).toEqual(item2.category);
-    // expect(response.body.latestBid).toEqual(item2.latestBid);
-    // expect(response.body.initialPrice).toEqual(item2.initialPrice);
-    // expect(response.body.startDate).toEqual(item2.startDate);
-    // expect(response.body.endDate).toEqual(item2.endDate);
-    // expect(response.body.status).toEqual(item2.status);
-    // expect(response.body.subCategory).toEqual(item2.subCategory);
-    // expect(response.body.itemCondition).toEqual(item2.itemCondition);
+    expect(response.body.itemTitle).toEqual(items.saeed.itemTitle);
+    expect(response.body.itemDescription).toEqual(items.saeed.itemDescription);
+    expect(response.body.category).toEqual(items.saeed.category);
+    expect(response.body.latestBid).toEqual(items.saeed.latestBid);
+    expect(response.body.initialPrice).toEqual(items.saeed.initialPrice);
+    expect(response.body.startDate).toEqual(items.saeed.startDate);
+    expect(response.body.endDate).toEqual(items.saeed.endDate);
+    expect(response.body.status).toEqual(items.saeed.status);
+    expect(response.body.subCategory).toEqual(items.saeed.subCategory);
+    expect(response.body.itemCondition).toEqual(items.saeed.itemCondition);
   });
 
   // test for getting all items by status and category and subCategory and itemCondition
@@ -182,9 +182,17 @@ describe("Item Test", () => {
   });
 
   // test deleting an item by id -- CANNOT be done without UPLOADED IMAGES
-  xit("should delete an item", async () => {
+  it("should delete an item", async () => {
     const response = await request.delete(`/item/${items.item1.id}`);
-    expect(response.status).toEqual(200);
-    expect(response.body).toEqual([1]);
+    expect(response.status).toEqual(204);
+    expect(response.body).toEqual({});
   });
+
+  // test deleting an item by id it works 
+  it("should delete an item", async () => {
+    const response = await request.get(`/item/${items.item1.id}`);
+    expect(response.status).toEqual(200);
+    expect(response.body).toEqual(null);
+  });
+
 });

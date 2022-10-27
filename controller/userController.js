@@ -44,7 +44,9 @@ const signup = async (req, res) => {
 
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          return res.status(400).json(error)
+          // return res.status(400).json(error);
+          return console.log(error);
+
         }
         res.render('contact', { msg: 'Verification Email has been sent!' });
       });
@@ -149,17 +151,17 @@ const getUserProfile = async (req, res) => {
 // function for updating user profile
 const updateUserProfile = async (req, res) => {
   try {
-      const id = req.params.id;
-      const updatedUser = await userModel.findOne({ where: { id: id } });
-      const obj = { ...req.body, image: req.file ? req.file.path : updatedUser.image };
+    const id = req.params.id;
+    const updatedUser = await userModel.findOne({ where: { id: id } });
+    const obj = { ...req.body, image: req.file ? req.file.path : updatedUser.image };
 
-        if (req.file && (updatedUser.image !== ('https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png' || 'https://whitneyumc.org/wp-content/uploads/2021/12/istockphoto-1136531172-612x612-1-400x400.jpg'))) {
-          fs.unlinkSync(updatedUser.image);
-        }
-        const updated = await updatedUser.update(obj);
-        res.status(202).json(updated);
-    } catch (error) {
-      res.status(500).send(error.message);
+    if (req.file && (updatedUser.image !== ('https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png' || 'https://whitneyumc.org/wp-content/uploads/2021/12/istockphoto-1136531172-612x612-1-400x400.jpg'))) {
+      fs.unlinkSync(updatedUser.image);
+    }
+    const updated = await updatedUser.update(obj);
+    res.status(202).json(updated);
+  } catch (error) {
+    res.status(500).send(error.message);
   }
 };
 
