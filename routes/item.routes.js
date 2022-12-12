@@ -5,7 +5,7 @@ const { Item, Notification, bidModel } = require("../models/index");
 const uploadItemImg = require("../middlewares/upload-itemImg");
 const fs = require("fs");
 
-const { getItems, getOneItem, addItem, updateItem } = require("../controller/itemController");
+const { getItems, getOneItem, addItem, updateItem, getTrendingItems } = require("../controller/itemController");
 
 // Routes
 router.post("/item", uploadItemImg, addItem);
@@ -19,6 +19,7 @@ router.get("/items/:status", getItems);
 router.get("/items/:status/:category", getItems);
 router.get("/items/:status/:category/:subCategory", getItems);
 router.get("/item/:id", getOneItem);
+router.get("/trending", getTrendingItems);
 
 
 // function to delete an item by id
