@@ -37,14 +37,15 @@ const signup = async (req, res) => {
     const user = await userModel.create(data);
     if (user) {
 
+
+
       let transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        service: 'gmail',
+        host: 'smtp.sendgrid.net',
         port: 587, //2525
         // secure: true, // true for 465, false for other ports
         auth: {
-          user: 'info.emazad@gmail.com',
-          pass: 'eMazad90-=',
+          user: 'apikey',
+          pass: process.env.SENDGRID_API_KEY,
         },
       });
 
