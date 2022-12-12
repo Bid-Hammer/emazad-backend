@@ -6,20 +6,20 @@ const { Op } = require("sequelize");
 const fs = require("fs");
 // const { readFileSync } = require("fs");
 
-const sgMail = require('@sendgrid/mail')
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+// const sgMail = require('@sendgrid/mail')
+// sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 const nodemailer = require("nodemailer");
-const sendGridTransport = require("nodemailer-sendgrid-transport");
-const { info } = require("console");
+// const sendGridTransport = require("nodemailer-sendgrid-transport");
+// const { info } = require("console");
 
-const transporter = nodemailer.createTransport(
-  sendGridTransport({
-    auth: {
-      api_key: process.env.SENDGRID_API_KEY,
-    },
-  })
-);
+// const transporter = nodemailer.createTransport(
+//   sendGridTransport({
+//     auth: {
+//       api_key: process.env.SENDGRID_API_KEY,
+//     },
+//   })
+// );
 
 // function for signing up
 const signup = async (req, res) => {
