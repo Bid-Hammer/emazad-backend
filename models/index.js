@@ -4,16 +4,16 @@ const collection = require("../collection/general-routes");
 require("dotenv").config();
 
 const POSTGRES_URL = process.env.DATABASE_URL || process.env.LOCAL_DATABASE_URL;
-// const sequelizeOption = {
-//     dialectOptions: {
-//         ssl: {
-//             require: true,
-//             rejectUnauthorized: false
-//         }
-//     }
-// }
+const sequelizeOption = {
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false
+        }
+    }
+}
 
-const sequelizeOption = {};
+// const sequelizeOption = {};
 let sequelize = new Sequelize(POSTGRES_URL, sequelizeOption);
 
 // checking if the connection is established or not to the database (extra)
