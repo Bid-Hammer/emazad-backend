@@ -10,6 +10,13 @@ const fs = require("fs");
 // sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
+const OAuth2 = google.auth.OAuth2;
+
+const OAuth2_client = new OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET);
+OAuth2_client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
+
+
 // const sendGridTransport = require("nodemailer-sendgrid-transport");
 // const { info } = require("console");
 
@@ -37,35 +44,68 @@ const signup = async (req, res) => {
     const user = await userModel.create(data);
     if (user) {
 
+      const accessToken = await OAuth2_client.getAccessToken();
 
-
-      let transporter = nodemailer.createTransport({
-        host: 'smtp.sendgrid.net',
-        port: 587, //2525
-        // secure: true, // true for 465, false for other ports
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
         auth: {
-          user: 'apikey',
-          pass: process.env.SENDGRID_API_KEY,
+          type: 'OAuth2',
+          user: process.env.EMAZAD_EMAIL,
+          clientId: process.env.CLIENT_ID,
+          clientSecret: process.env.CLIENT_SECRET,
+          refreshToken: process.env.REFRESH_TOKEN,
+          accessToken: accessToken,
         },
       });
 
       let mailOptions = {
-        from: '"Emazad Contact" <qaisalsgher@gmail.com>',
+        from: '"Emazad Contact" <${process.env.EMAZAD_EMAIL}>',
         to: `${data.email}`,
         subject: 'Verification Email',
         text: 'Welcome to Emazad',
-        html: `<h5>Hello ${data.userName} Plase Verifie Your Email<h5/><br/>
-            <a href="http://localhost:8080/verfication/${user.id}">Click Here</a>`, // like for login page in the front end
+        html: `<h5>Hello ${data.userName} Plase Verify Your Email<h5/><br/>
+            <a href="https://emazad.herokuapp.com/verfication/${user.id}">Click Here</a>`, // like for login page in the front end
       };
 
-      transporter.sendMail(mailOptions, (error, info) => {
+      transporter.sendMail(mailOptions, (error, result) => {
         if (error) {
-          // return res.status(400).json(error);
-          return console.log(error);
-
+          console.log(error);
+        } else {
+          console.log(result);
         }
-        res.render('contact', { msg: 'Verification Email has been sent!' });
+        transporter.close();
       });
+      
+
+
+
+      // let transporter = nodemailer.createTransport({
+      //   host: 'smtp.sendgrid.net',
+      //   port: 587, //2525
+      //   // secure: true, // true for 465, false for other ports
+      //   auth: {
+      //     user: 'apikey',
+      //     pass: process.env.SENDGRID_API_KEY,
+      //   },
+      // });
+
+      // let mailOptions = {
+      //   from: '"Emazad Contact" <qaisalsgher@gmail.com>',
+      //   to: `${data.email}`,
+      //   subject: 'Verification Email',
+      //   text: 'Welcome to Emazad',
+      //   html: `<h5>Hello ${data.userName} Plase Verifie Your Email<h5/><br/>
+      //       <a href="http://localhost:8080/verfication/${user.id}">Click Here</a>`, // like for login page in the front end
+      // };
+
+      // transporter.sendMail(mailOptions, (error, info) => {
+      //   if (error) {
+      //     // return res.status(400).json(error);
+      //     return console.log(error);
+
+      //   }
+      //   res.render('contact', { msg: 'Verification Email has been sent!' });
+      // });
 
       // integrating sendgrid
       // const msg = {
