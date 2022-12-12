@@ -2,13 +2,23 @@
 const base64 = require("base-64");
 const bcrypt = require("bcrypt");
 const { itemModel, userModel, bidModel } = require("../models/index");
-const nodemailer = require("nodemailer");
 const { Op } = require("sequelize");
 const fs = require("fs");
 // const { readFileSync } = require("fs");
 
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+const nodemailer = require("nodemailer");
+const sendGridTransport = require("nodemailer-sendgrid-transport");
+
+const transporter = nodemailer.createTransport(
+  sendGridTransport({
+    auth: {
+      api_key: process.env.SENDGRID_API_KEY,
+    },
+  })
+);
 
 // function for signing up
 const signup = async (req, res) => {
@@ -55,21 +65,30 @@ const signup = async (req, res) => {
       // });
 
       // integrating sendgrid
-      const msg = {
-        to: `${data.email}`, // Change to your recipient
-        from: 'info.emazad@gmail.com', // Change to your verified sender
-        subject: 'Please Confirm Your Email | eMazad',
-        text: 'Welcome to eMazad, Please Confirm Your Email with the link below ',
-        html: `<h5>Hello ${data.userName} Plase Verifie Your Email<h5/><br/>
-               <a href="http://localhost:8080/verfication/${user.id}">Click Here</a>`,
-      }
-      sgMail
-        .send(msg)
-        .then(() => {
-          console.log('Email sent')
-        })
-        .catch((error) => {
-          console.error(error)
+      // const msg = {
+      //   to: `${data.email}`, // Change to your recipient
+      //   from: 'info.emazad@gmail.com', // Change to your verified sender
+      //   subject: 'Please Confirm Your Email | eMazad',
+      //   text: 'Welcome to eMazad, Please Confirm Your Email with the link below ',
+      //   html: `<h5>Hello ${data.userName} Plase Verifie Your Email<h5/><br/>
+      //          <a href="http://localhost:8080/verfication/${user.id}">Click Here</a>`,
+      // }
+      // sgMail
+      //   .send(msg)
+      //   .then(() => {
+      //     console.log('Email sent')
+      //   })
+      //   .catch((error) => {
+      //     console.error(error)
+      //   })
+
+
+        transporter.sendMail({
+          to: `${data.email}`, // Change to your recipient
+          from: 'info.emazad@gmail.com', // Change to your verified sender
+          subject: 'Please Confirm Your Email | eMazad',
+          text: 'Welcome to eMazad, Please Confirm Your Email with the link below ',
+          html: `<h5>Hello ${data.userName} Plase Verifie Your Email<h5/><br/> <a href="https://emazad.herokuapp.com/verfication/${user.id}">Click Here</a>`,
         })
 
       return res.status(201).json(user);
