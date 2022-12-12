@@ -9,7 +9,7 @@ db.sync()
   })
   .catch(console.error);
 
-// force to drob table and create new 
+// force to drob table and create new
 
 // db.sync({ force: true })
 //   .then(() => {

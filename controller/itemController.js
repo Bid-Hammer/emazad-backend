@@ -145,4 +145,23 @@ const updateItem = async (req, res) => {
     console.log("Error in GeneralRoutes.updateItem: ", err.message);
   }
 };
-module.exports = { getItems, getOneItem, addItem, updateItem };
+
+// get trending items 
+const getTrendingItems = async (req, res) => {
+  try {
+    const excludedAttributes = ["password", "email", "role", "createdAt", "updatedAt", "token"];
+    const includeAll = [
+      { model: userModel, attributes: { exclude: excludedAttributes } },
+      { model: bidModel, include: [{ model: userModel, attributes: { exclude: excludedAttributes } }] },
+    ];
+    const items = await itemModel.findAll({
+      include: includeAll,
+    });
+    const sortedItems = items.sort((a, b) => (b.latestBid - a.latestBid) && (a.endDate - b.endDate));
+    res.status(200).json(sortedItems);
+  } catch (err) {
+    console.log("Error in GeneralRoutes.getTrendingItems: ", err.message);
+  }
+};
+
+module.exports = { getItems, getOneItem, addItem, updateItem, getTrendingItems };
