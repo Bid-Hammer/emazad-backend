@@ -155,6 +155,7 @@ const getTrendingItems = async (req, res) => {
       { model: bidModel, include: [{ model: userModel, attributes: { exclude: excludedAttributes } }] },
     ];
     const items = await itemModel.findAll({
+      where: { status: "active" },
       include: includeAll,
     });
     const sortedItems = items.sort((a, b) => (b.latestBid - a.latestBid) && (a.endDate - b.endDate));
