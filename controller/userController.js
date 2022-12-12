@@ -7,6 +7,9 @@ const { Op } = require("sequelize");
 const fs = require("fs");
 // const { readFileSync } = require("fs");
 
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
 // function for signing up
 const signup = async (req, res) => {
   try {
@@ -23,33 +26,51 @@ const signup = async (req, res) => {
     const user = await userModel.create(data);
     if (user) {
 
-      let transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: 2525, //587
-        // secure: true, // true for 465, false for other ports
-        auth: {
-          user: process.env.USER_HOST,
-          pass: process.env.PASS_HOST,
-        },
-      });
+      // let transporter = nodemailer.createTransport({
+      //   host: process.env.EMAIL_HOST,
+      //   port: 2525, //587
+      //   // secure: true, // true for 465, false for other ports
+      //   auth: {
+      //     user: process.env.USER_HOST,
+      //     pass: process.env.PASS_HOST,
+      //   },
+      // });
 
-      let mailOptions = {
-        from: '"Emazad Contact" <qaisalsgher@gmail.com>',
-        to: `${data.email}`,
-        subject: 'Verification Email',
-        text: 'Welcome to Emazad',
+      // let mailOptions = {
+      //   from: '"Emazad Contact" <qaisalsgher@gmail.com>',
+      //   to: `${data.email}`,
+      //   subject: 'Verification Email',
+      //   text: 'Welcome to Emazad',
+      //   html: `<h5>Hello ${data.userName} Plase Verifie Your Email<h5/><br/>
+      //       <a href="http://localhost:8080/verfication/${user.id}">Click Here</a>`, // like for login page in the front end
+      // };
+
+      // transporter.sendMail(mailOptions, (error, info) => {
+      //   if (error) {
+      //     // return res.status(400).json(error);
+      //     return console.log(error);
+
+      //   }
+      //   res.render('contact', { msg: 'Verification Email has been sent!' });
+      // });
+
+      // integrating sendgrid
+      const msg = {
+        to: `${data.email}`, // Change to your recipient
+        from: 'info.emazad@gmail.com', // Change to your verified sender
+        subject: 'Please Confirm Your Email | eMazad',
+        text: 'Welcome to eMazad, Please Confirm Your Email with the link below ',
         html: `<h5>Hello ${data.userName} Plase Verifie Your Email<h5/><br/>
-            <a href="http://localhost:8080/verfication/${user.id}">Click Here</a>`, // like for login page in the front end
-      };
-
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          // return res.status(400).json(error);
-          return console.log(error);
-
-        }
-        res.render('contact', { msg: 'Verification Email has been sent!' });
-      });
+               <a href="http://localhost:8080/verfication/${user.id}">Click Here</a>`,
+      }
+      sgMail
+        .send(msg)
+        .then(() => {
+          console.log('Email sent')
+        })
+        .catch((error) => {
+          console.error(error)
+        })
 
       return res.status(201).json(user);
 
