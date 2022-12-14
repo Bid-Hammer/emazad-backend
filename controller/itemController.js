@@ -111,7 +111,7 @@ const addItem = async (req, res) => {
       res.status(201).json(output);
     }
   } catch (err) {
-    req.files.map((file) => fs.unlinkSync(file.path));
+    req.file && req.files.map((file) => fs.unlinkSync(file.path));
     console.log("Error in GeneralRoutes.addItem: ", err.message);
   }
 };
