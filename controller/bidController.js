@@ -1,6 +1,6 @@
 "use strict";
 
-const { Notification, itemModel, bidModel } = require("../models");
+const { Notification, itemModel, bidModel, userModel } = require("../models");
 
 const createBid = async (req, res) => {
   try {
@@ -28,13 +28,20 @@ const createBid = async (req, res) => {
       return res.status(400).json({ message: "first bid should be higher than the initial price" });
     }
 
+    const excludedAttributes = ["password", "email", "role", "createdAt", "updatedAt", "token"];
+
     const bid = await bidModel.create(obj);
+    const output = await bidModel.findOne({
+      where: { id: bid.id },
+      include: [{ model: userModel, attributes: { exclude: excludedAttributes } }],
+    });
+
     await itemModel.update({ latestBid: obj.bidprice }, { where: { id: obj.itemId } });
 
     const filteredUsers = filterUsers(item, obj);
     createNotifications(filteredUsers, item, obj, bid.id);
 
-    res.status(201).json(bid);
+    res.status(201).json(output);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

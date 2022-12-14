@@ -32,7 +32,7 @@ const getUserRating = async (req, res) => {
       return acc + curr.rating / rating.length;
     }, 0);
     const countRating = rating.length;
-    res.status(200).json({ averageRating, countRating });
+    res.status(200).json({ rating, averageRating, countRating });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

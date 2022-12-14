@@ -1,12 +1,14 @@
 "use strict";
 
-const { favoriteModel, itemModel } = require("../models");
+const { favoriteModel, itemModel, userModel } = require("../models");
 
 const userFavorites = async (req, res) => {
   try {
+    const excludedAttributes = ["password", "email", "role", "createdAt", "updatedAt", "token"];
+
     const favorites = await favoriteModel.findAll({
       where: { userId: req.params.id },
-      include: [{ model: itemModel }],
+      include: [{ model: itemModel, include: [{ model: userModel, attributes: { exclude: excludedAttributes } }] }],
     });
     res.status(200).json(favorites);
   } catch (err) {
@@ -16,16 +18,21 @@ const userFavorites = async (req, res) => {
 
 const createFavorite = async (req, res) => {
   try {
+    const excludedAttributes = ["password", "email", "role", "createdAt", "updatedAt", "token"];
+
     const favorites = await favoriteModel.findAll({
       where: { userId: req.body.userId },
-      include: [{ model: itemModel }],
     });
     const isExist = favorites.some((favorite) => favorite.itemId === req.body.itemId);
     if (isExist) {
       res.status(400).json("The item already exists in favorite list");
     } else {
       const favorite = await favoriteModel.create(req.body);
-      res.status(201).json(favorite);
+      const output = await favoriteModel.findOne({
+        where: { id: favorite.id },
+        include: [{ model: userModel, attributes: { exclude: excludedAttributes } }],
+      });
+      res.status(201).json(output);
     }
   } catch (err) {
     res.status(500).json(err.message);
