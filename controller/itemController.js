@@ -1,8 +1,29 @@
 `use strict`;
 
-const { itemModel, userModel, bidModel, commentModel, replyModel } = require("../models/index");
+const { itemModel, userModel, bidModel, commentModel, replyModel, favoriteModel } = require("../models/index");
 const fs = require("fs");
 const console = require("console");
+
+const excludedAttributes = ["password", "email", "role", "createdAt", "updatedAt", "token"];
+
+const itemIncludes = [
+  { model: userModel, attributes: { exclude: excludedAttributes } },
+  { model: bidModel, include: [{ model: userModel, attributes: { exclude: excludedAttributes } }] },
+  {
+    model: commentModel,
+    include: [
+      { model: userModel, attributes: { exclude: excludedAttributes } },
+      { model: replyModel, include: [{ model: userModel, attributes: { exclude: excludedAttributes } }] },
+    ],
+  },
+  { model: favoriteModel, include: [{ model: userModel, attributes: { exclude: excludedAttributes } }] },
+];
+
+const itemsIncludes = [
+  { model: userModel, attributes: { exclude: excludedAttributes } },
+  { model: bidModel, include: [{ model: userModel, attributes: { exclude: excludedAttributes } }] },
+  { model: favoriteModel, include: [{ model: userModel, attributes: { exclude: excludedAttributes } }] },
+];
 
 const getItems = async (req, res) => {
   try {
@@ -10,18 +31,16 @@ const getItems = async (req, res) => {
     let category = req.params.category;
     let subCategory = req.params.subCategory;
 
-    const excludedAttributes = ["password", "email", "role", "createdAt", "updatedAt", "token"];
-    const includeUsers = { include: [{ model: userModel, attributes: { exclude: excludedAttributes } }] };
-    const includeAll = [
-      { model: userModel, attributes: { exclude: excludedAttributes } },
-      { model: bidModel, includeUsers },
-    ];
-
     const sortedItems = (items) => {
       if (status === "standby") {
         return items.sort((a, b) => b.startDate - a.startDate);
+      } else if (status === "active") {
+        return items.sort((a, b) => b.endDate - a.endDate);
+      } else if (status === "sold" || status === "expired") {
+        return items.sort((a, b) => b.updatedAt - a.updatedAt);
+      } else {
+        return items.sort((a, b) => b.endDate - a.endDate);
       }
-      return items.sort((a, b) => b.endDate - a.endDate);
     };
 
     let handelWhere = {};
@@ -41,7 +60,7 @@ const getItems = async (req, res) => {
 
     const items = await itemModel.findAll({
       where: handelWhere,
-      include: includeAll,
+      include: itemsIncludes,
     });
     res.status(200).json(sortedItems(items));
   } catch (err) {
@@ -52,22 +71,15 @@ const getItems = async (req, res) => {
 const getOneItem = async (req, res) => {
   try {
     const id = req.params.id;
-    const excludedAttributes = ["password", "email", "role", "createdAt", "updatedAt", "token"];
-    const includeAll = [
-      { model: userModel, attributes: { exclude: excludedAttributes } },
-      { model: bidModel, include: [{ model: userModel, attributes: { exclude: excludedAttributes } }] },
-      {
-        model: commentModel,
-        include: [
-          { model: userModel, attributes: { exclude: excludedAttributes } },
-          { model: replyModel, include: [{ model: userModel, attributes: { exclude: excludedAttributes } }] },
-        ],
-      },
-    ];
 
     const item = await itemModel.findOne({
       where: { id: id },
-      include: includeAll,
+      include: itemIncludes,
+      order: [
+        [bidModel, "createdAt", "DESC"],
+        [commentModel, "createdAt", "DESC"],
+        [commentModel, replyModel, "createdAt", "DESC"],
+      ],
     });
     res.status(200).json(item);
   } catch (err) {
@@ -75,31 +87,34 @@ const getOneItem = async (req, res) => {
   }
 };
 
-
 const addItem = async (req, res) => {
   try {
     if (!req.body.itemImage) {
-
       const obj = { ...req.body, itemImage: req.files.map((file) => file.path) };
 
       if (req.files.length === 0) {
-        obj.itemImage = ["http://www.sitech.co.id/assets/img/products/default.jpg"]
+        obj.itemImage = ["http://www.sitech.co.id/assets/img/products/default.jpg"];
       }
 
       const item = await itemModel.create(obj, fs);
-      res.status(201).json(item);
-
+      const output = await itemModel.findOne({
+        where: { id: item.id },
+        include: itemIncludes,
+      });
+      res.status(201).json(output);
     } else {
       const item = await itemModel.create(req.body);
-      res.status(201).json(item);
+      const output = await itemModel.findOne({
+        where: { id: item.id },
+        include: itemIncludes,
+      });
+      res.status(201).json(output);
     }
-
   } catch (err) {
     req.files.map((file) => fs.unlinkSync(file.path));
     console.log("Error in GeneralRoutes.addItem: ", err.message);
   }
 };
-
 
 // update item by id and update itemImage if there is a new image and delete the old image if you need
 const updateItem = async (req, res) => {
@@ -117,7 +132,7 @@ const updateItem = async (req, res) => {
       oldImages = item.itemImage;
       newImages = obj.itemImage;
     } else {
-      obj = req.body
+      obj = req.body;
       item = await itemModel.findOne({ where: { id: id } });
       oldImages = item.itemImage;
       newImages = obj.itemImage;
@@ -134,31 +149,34 @@ const updateItem = async (req, res) => {
     if (newImages.length > 0) {
       oldImages = [...oldImages, ...newImages];
       if (oldImages.includes("http://www.sitech.co.id/assets/img/products/default.jpg")) {
-        oldImages = oldImages.filter((oldImage) => oldImage !== "http://www.sitech.co.id/assets/img/products/default.jpg");
+        oldImages = oldImages.filter(
+          (oldImage) => oldImage !== "http://www.sitech.co.id/assets/img/products/default.jpg"
+        );
       }
     }
     obj.itemImage = oldImages;
     const updatedItem = await itemModel.update(obj, { where: { id: id } });
-    res.status(202).json(updatedItem);
+
+    const output = await itemModel.findOne({
+      where: { id: updatedItem.id },
+      include: itemIncludes,
+    });
+
+    res.status(202).json(output);
   } catch (err) {
     req.files.map((file) => fs.unlinkSync(file.path));
     console.log("Error in GeneralRoutes.updateItem: ", err.message);
   }
 };
 
-// get trending items 
+// get trending items
 const getTrendingItems = async (req, res) => {
   try {
-    const excludedAttributes = ["password", "email", "role", "createdAt", "updatedAt", "token"];
-    const includeAll = [
-      { model: userModel, attributes: { exclude: excludedAttributes } },
-      { model: bidModel, include: [{ model: userModel, attributes: { exclude: excludedAttributes } }] },
-    ];
     const items = await itemModel.findAll({
       where: { status: "active" },
-      include: includeAll,
+      include: itemsIncludes,
     });
-    const sortedItems = items.sort((a, b) => (b.latestBid - a.latestBid) && (a.endDate - b.endDate));
+    const sortedItems = items.sort((a, b) => b.Bids.length - a.Bids.length && a.endDate - b.endDate);
     res.status(200).json(sortedItems);
   } catch (err) {
     console.log("Error in GeneralRoutes.getTrendingItems: ", err.message);

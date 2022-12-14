@@ -16,18 +16,6 @@ const OAuth2 = google.auth.OAuth2;
 const OAuth2_client = new OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET);
 OAuth2_client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
-
-// const sendGridTransport = require("nodemailer-sendgrid-transport");
-// const { info } = require("console");
-
-// const transporter = nodemailer.createTransport(
-//   sendGridTransport({
-//     auth: {
-//       api_key: process.env.SENDGRID_API_KEY,
-//     },
-//   })
-// );
-
 // function for signing up
 const signup = async (req, res) => {
   try {
@@ -35,21 +23,22 @@ const signup = async (req, res) => {
       ...req.body,
 
       // to set a default image when the user does not upload an image, use the line of code below:
-      image: req.file ? req.file.path : req.body.gender === 'male' ?
-        'https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png' :
-        'https://whitneyumc.org/wp-content/uploads/2021/12/istockphoto-1136531172-612x612-1-400x400.jpg',
+      image: req.file
+        ? req.file.path
+        : req.body.gender === "male"
+        ? "https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png"
+        : "https://whitneyumc.org/wp-content/uploads/2021/12/istockphoto-1136531172-612x612-1-400x400.jpg",
       password: await bcrypt.hash(req.body.password, 10),
     };
 
     const user = await userModel.create(data);
     if (user) {
-
       const accessToken = await OAuth2_client.getAccessToken();
 
       const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        service: "gmail",
         auth: {
-          type: 'OAuth2',
+          type: "OAuth2",
           user: process.env.EMAZAD_EMAIL,
           clientId: process.env.CLIENT_ID,
           clientSecret: process.env.CLIENT_SECRET,
@@ -61,8 +50,8 @@ const signup = async (req, res) => {
       let mailOptions = {
         from: '"Emazad Contact" <${process.env.EMAZAD_EMAIL}>',
         to: `${data.email}`,
-        subject: 'Verification Email',
-        text: 'Welcome to Emazad',
+        subject: "Verification Email",
+        text: "Welcome to Emazad",
         html: `<h5>Hello ${data.userName} Plase Verify Your Email<h5/><br/>
             <a href="https://emazad.herokuapp.com/verfication/${user.id}">Click Here</a>`, // like for login page in the front end
       };
@@ -75,74 +64,13 @@ const signup = async (req, res) => {
         }
         transporter.close();
       });
-      
-
-
-
-      // let transporter = nodemailer.createTransport({
-      //   host: 'smtp.sendgrid.net',
-      //   port: 587, //2525
-      //   // secure: true, // true for 465, false for other ports
-      //   auth: {
-      //     user: 'apikey',
-      //     pass: process.env.SENDGRID_API_KEY,
-      //   },
-      // });
-
-      // let mailOptions = {
-      //   from: '"Emazad Contact" <qaisalsgher@gmail.com>',
-      //   to: `${data.email}`,
-      //   subject: 'Verification Email',
-      //   text: 'Welcome to Emazad',
-      //   html: `<h5>Hello ${data.userName} Plase Verifie Your Email<h5/><br/>
-      //       <a href="http://localhost:8080/verfication/${user.id}">Click Here</a>`, // like for login page in the front end
-      // };
-
-      // transporter.sendMail(mailOptions, (error, info) => {
-      //   if (error) {
-      //     // return res.status(400).json(error);
-      //     return console.log(error);
-
-      //   }
-      //   res.render('contact', { msg: 'Verification Email has been sent!' });
-      // });
-
-      // integrating sendgrid
-      // const msg = {
-      //   to: `${data.email}`, // Change to your recipient
-      //   from: 'info.emazad@gmail.com', // Change to your verified sender
-      //   subject: 'Please Confirm Your Email | eMazad',
-      //   text: 'Welcome to eMazad, Please Confirm Your Email with the link below ',
-      //   html: `<h5>Hello ${data.userName} Plase Verifie Your Email<h5/><br/>
-      //          <a href="http://localhost:8080/verfication/${user.id}">Click Here</a>`,
-      // }
-      // sgMail
-      //   .send(msg)
-      //   .then(() => {
-      //     console.log('Email sent')
-      //   })
-      //   .catch((error) => {
-      //     console.error(error)
-      //   })
-
-
-        // transporter.sendMail({
-        //   to: `${data.email}`, // Change to your recipient
-        //   from: 'info.emazad@gmail.com', // Change to your verified sender
-        //   subject: 'Please Confirm Your Email | eMazad',
-        //   text: 'Welcome to eMazad, Please Confirm Your Email with the link below ',
-        //   html: `<h5>Hello ${data.userName} Plase Verifie Your Email<h5/><br/> <a href="https://emazad.herokuapp.com/verfication/${user.id}">Click Here</a>`,
-        // })
 
       return res.status(201).json(user);
-
     } else {
       fs.unlinkSync(req.file.path);
     }
-
-
   } catch (error) {
-    fs.unlinkSync(req.file.path);
+    req.file && fs.unlinkSync(req.file.path);
     res.status(500).send(error.message);
   }
 };
@@ -192,7 +120,6 @@ const verification = async (req, res) => {
     const [email, password] = decodedString.split(":");
 
     if (user.email === email || user.userName === email || user.phoneNumber === email) {
-
       const valid = await bcrypt.compare(password, user.password);
       if (valid) {
         user.confirmed = true;
@@ -208,7 +135,6 @@ const verification = async (req, res) => {
     return res.status(403).send("Invalid Login");
   }
 };
-
 
 // function for getting all users
 const allUsers = async (req, res) => {
@@ -238,7 +164,12 @@ const updateUserProfile = async (req, res) => {
     const updatedUser = await userModel.findOne({ where: { id: id } });
     const obj = { ...req.body, image: req.file ? req.file.path : updatedUser.image };
 
-    if (req.file && (updatedUser.image !== ('https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png' || 'https://whitneyumc.org/wp-content/uploads/2021/12/istockphoto-1136531172-612x612-1-400x400.jpg'))) {
+    if (
+      req.file &&
+      updatedUser.image !==
+        ("https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png" ||
+          "https://whitneyumc.org/wp-content/uploads/2021/12/istockphoto-1136531172-612x612-1-400x400.jpg")
+    ) {
       fs.unlinkSync(updatedUser.image);
     }
     const updated = await updatedUser.update(obj);

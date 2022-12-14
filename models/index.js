@@ -5,13 +5,13 @@ require("dotenv").config();
 
 const POSTGRES_URL = process.env.DATABASE_URL || process.env.LOCAL_DATABASE_URL;
 const sequelizeOption = {
-    dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false
-        }
-    }
-}
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  },
+};
 
 // const sequelizeOption = {};
 let sequelize = new Sequelize(POSTGRES_URL, sequelizeOption);
@@ -40,7 +40,6 @@ db.ratingModel = require("./rating.model")(sequelize, DataTypes);
 db.reportModel = require("./report.model")(sequelize, DataTypes);
 db.chatModel = require("./chat.model")(sequelize, DataTypes);
 
-
 // Collections
 db.Item = new collection(db.itemModel);
 db.Bid = new collection(db.bidModel);
@@ -51,7 +50,6 @@ db.Notification = new collection(db.notificationModel);
 db.Rating = new collection(db.ratingModel);
 db.Report = new collection(db.reportModel);
 db.Chat = new collection(db.chatModel);
-
 
 // Relations
 
@@ -125,7 +123,5 @@ db.chatModel.belongsTo(db.userModel, { foreignKey: "senderId", targetKey: "id" }
 
 db.userModel.hasMany(db.chatModel, { foreignKey: "receiverId", sourceKey: "id" });
 db.chatModel.belongsTo(db.userModel, { foreignKey: "receiverId", targetKey: "id" });
-
-
 
 module.exports = db;
