@@ -47,7 +47,7 @@ const signup = async (req, res) => {
         subject: "Verification Email",
         text: "Welcome to Emazad",
         html: `<h5>Hello ${data.userName} Plase Verify Your Email<h5/><br/>
-            <a href="http://localhost:8080/verification/${user.id}">Click Here</a>`, // like for login page in the front end
+            <a href="http://localhost:3000/verification/${user.id}">Click Here</a>`, // like for login page in the front end
       };
 
       transporter.sendMail(mailOptions, (error, result) => {
