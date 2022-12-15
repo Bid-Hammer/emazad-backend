@@ -3,11 +3,7 @@ const base64 = require("base-64");
 const bcrypt = require("bcrypt");
 const { itemModel, userModel, bidModel } = require("../models/index");
 const { Op } = require("sequelize");
-const fs = require("fs");
-// const { readFileSync } = require("fs");
 
-// const sgMail = require('@sendgrid/mail')
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
@@ -22,12 +18,12 @@ const signup = async (req, res) => {
     const data = {
       ...req.body,
 
-      // to set a default image when the user does not upload an image, use the line of code below:
-      image: req.file
-        ? req.file.path
-        : req.body.gender === "male"
-        ? "https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png"
-        : "https://whitneyumc.org/wp-content/uploads/2021/12/istockphoto-1136531172-612x612-1-400x400.jpg",
+      // if the image is null then it will take the default image if the gender is male or female
+        image: req.body.image ? 
+        image : req.body.gender === "male" ? 
+        "https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png" : 
+        "https://whitneyumc.org/wp-content/uploads/2021/12/istockphoto-1136531172-612x612-1-400x400.jpg",
+
       password: await bcrypt.hash(req.body.password, 10),
     };
 
@@ -53,7 +49,7 @@ const signup = async (req, res) => {
         subject: "Verification Email",
         text: "Welcome to Emazad",
         html: `<h5>Hello ${data.userName} Plase Verify Your Email<h5/><br/>
-            <a href="https://emazad.herokuapp.com/verfication/${user.id}">Click Here</a>`, // like for login page in the front end
+            <a href="http://localhost:8080/verification/${user.id}">Click Here</a>`, // like for login page in the front end
       };
 
       transporter.sendMail(mailOptions, (error, result) => {
@@ -66,11 +62,10 @@ const signup = async (req, res) => {
       });
 
       return res.status(201).json(user);
-    } else {
-      fs.unlinkSync(req.file.path);
-    }
+    } else {  
+      return res.status(400).send("Invalid Data");
+      }
   } catch (error) {
-    req.file && fs.unlinkSync(req.file.path);
     res.status(500).send(error.message);
   }
 };
@@ -162,16 +157,8 @@ const updateUserProfile = async (req, res) => {
   try {
     const id = req.params.id;
     const updatedUser = await userModel.findOne({ where: { id: id } });
-    const obj = { ...req.body, image: req.file ? req.file.path : updatedUser.image };
+    const obj = req.body;
 
-    if (
-      req.file &&
-      updatedUser.image !==
-        ("https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png" ||
-          "https://whitneyumc.org/wp-content/uploads/2021/12/istockphoto-1136531172-612x612-1-400x400.jpg")
-    ) {
-      fs.unlinkSync(updatedUser.image);
-    }
     const updated = await updatedUser.update(obj);
     res.status(202).json(updated);
   } catch (error) {
