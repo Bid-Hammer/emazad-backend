@@ -2,14 +2,13 @@
 const express = require("express");
 const router = express.Router();
 const { Item, Notification, bidModel } = require("../models/index");
-const uploadItemImg = require("../middlewares/upload-itemImg");
-const fs = require("fs");
+// const uploadItemImg = require("../middlewares/upload-itemImg");
 
 const { getItems, getOneItem, addItem, updateItem, getTrendingItems } = require("../controller/itemController");
 
 // Routes
-router.post("/item", uploadItemImg, addItem);
-router.put("/item/:id", uploadItemImg, updateItem);
+router.post("/item", addItem);
+router.put("/item/:id", updateItem);
 router.delete("/item/:id", deleteItem);
 router.put("/itemhide/:id", hideItem);
 
@@ -25,13 +24,6 @@ router.get("/trending", getTrendingItems);
 // function to delete an item by id
 async function deleteItem(req, res) {
   const id = req.params.id;
-  const itemDeleted = await Item.read(id);
-  console.log(itemDeleted.itemImage);
-  if (!itemDeleted.itemImage[0].startsWith("http")) {
-    itemDeleted.itemImage.map((path) => {
-      fs.unlinkSync(path);
-    });
-  }
   let deletedItem = await Item.delete(id);
   res.status(204).json({ deletedItem });
 }

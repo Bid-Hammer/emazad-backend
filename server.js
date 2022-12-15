@@ -16,6 +16,8 @@ const ratingRoutes = require("./routes/rating.routes");
 const reportRoutes = require("./routes/report.routes");
 const chatRoutes = require("./routes/chat.routes");
 
+const cloudinary = require("./cloudinary/cloudinary");
+
 
 app.use(cors());
 app.use(express.json());

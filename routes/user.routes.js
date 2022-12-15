@@ -15,16 +15,16 @@ const {
 } = require("../controller/userController");
 const bearerAuth = require("../middlewares/bearer-auth");
 const basicAuth = require("../middlewares/basic-auth");
-const uploadUserImg = require("../middlewares/upload-userImg");
+// const uploadUserImg = require("../middlewares/upload-userImg");
 
 // Routes
-router.post("/signup", uploadUserImg, basicAuth, signup);
+router.post("/signup", basicAuth, signup);
 router.post("/login", login);
 router.get("/users", bearerAuth, allUsers);
 router.post('/verification/:id', verification);
 
 router.get("/profile/:id", bearerAuth, getUserProfile);
-router.put("/profile/:id", uploadUserImg, bearerAuth, updateUserProfile);
+router.put("/profile/:id", bearerAuth, updateUserProfile);
 
 router.get("/userActiveItems/:id", bearerAuth, userActiveItems);
 router.get("/userStandByItems/:id", bearerAuth, userStandByItems);
