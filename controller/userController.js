@@ -14,15 +14,13 @@ OAuth2_client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
 // function for signing up
 const signup = async (req, res) => {
+  console.log(req.body)
   try {
     const data = {
       ...req.body,
 
       // if the image is null then it will take the default image if the gender is male or female
-        image: req.body.image ? 
-        image : req.body.gender === "male" ? 
-        "https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png" : 
-        "https://whitneyumc.org/wp-content/uploads/2021/12/istockphoto-1136531172-612x612-1-400x400.jpg",
+      image: req.body.image ? req.body.image : req.body.gender === "male" ? "https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png" : "https://whitneyumc.org/wp-content/uploads/2021/12/istockphoto-1136531172-612x612-1-400x400.jpg",
 
       password: await bcrypt.hash(req.body.password, 10),
     };
