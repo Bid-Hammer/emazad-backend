@@ -2,12 +2,13 @@
 const express = require("express");
 const router = express.Router();
 const { Report } = require("../models");
-
+const { getReportedUser } = require("../controller/reportController");
 // Routes
 router.get("/report", getReport);
 router.post("/report", createReport);
 router.delete("/report/:id", deleteReport);
 router.get("/report/:id", getOneReport);
+router.get("/reportItems", getReportedUser);
 
 // function to get all reports
 async function getReport(req, res) {
@@ -33,7 +34,7 @@ async function createReport(req, res) {
 async function deleteReport(req, res) {
   const id = req.params.id;
   let deletedReport = await Report.delete(id);
-  res.status(204).send( "Report Deleted Successfully" );
+  res.status(204).send("Report Deleted Successfully");
 }
 
 

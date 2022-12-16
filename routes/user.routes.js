@@ -12,6 +12,7 @@ const {
   userWonItems,
   userEngagedItems,
   verification,
+  usersBlocked
 } = require("../controller/userController");
 const bearerAuth = require("../middlewares/bearer-auth");
 const basicAuth = require("../middlewares/basic-auth");
@@ -31,5 +32,6 @@ router.get("/userStandByItems/:id", bearerAuth, userStandByItems);
 router.get("/userSoldItems/:id", bearerAuth, userSoldItems);
 router.get("/userWonItems/:id", bearerAuth, userWonItems);
 router.get("/userEngagedItems/:id", bearerAuth, userEngagedItems);
+router.get("/usersBlocked", usersBlocked);
 
 module.exports = router;
