@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 const { itemModel, userModel, bidModel } = require("../models/index");
 const { Op } = require("sequelize");
 
-
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 const OAuth2 = google.auth.OAuth2;
@@ -139,11 +138,13 @@ const allUsers = async (req, res) => {
   }
 };
 
+
+const excludedAttributes = ["password", "capabilities", "role", "updatedAt", "token", "confirmed"];
 // function for getting user profile
 const getUserProfile = async (req, res) => {
   try {
     const id = req.params.id;
-    const user = await userModel.findOne({ where: { id: id } });
+    const user = await userModel.findOne({ where: { id: id }, attributes: { exclude: excludedAttributes }});
     res.status(200).json(user);
   } catch (error) {
     res.status(500).send(error.message);
