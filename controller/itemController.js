@@ -37,7 +37,7 @@ const getItems = async (req, res) => {
       } else if (status === "active") {
         return items.sort((a, b) => b.endDate - a.endDate);
       } else if (status === "sold" || status === "expired") {
-        return items.sort((a, b) => b.updatedAt - a.updatedAt);
+        return items.sort((a, b) => b.createdAt - a.createdAt);
       } else {
         return items.sort((a, b) => b.endDate - a.endDate);
       }
@@ -105,9 +105,9 @@ const updateItem = async (req, res) => {
   try {
     const id = req.params.id;
     const obj = req.body;
-    const updatedItem = await itemModel.update(obj, { where: { id: id } });
+    await itemModel.update(obj, { where: { id: id } });
     const output = await itemModel.findOne({
-      where: { id: updatedItem.id },
+      where: { id: id },
       include: itemIncludes,
     });
     res.status(202).json(output);
