@@ -234,6 +234,17 @@ const userEngagedItems = async (req, res) => {
   }
 };
 
+// function for getting all the blocked users
+const usersBlocked = async (req, res) => {
+  try {
+    const users = await userModel.findAll({ where: { status: "blocked" } });
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+
 module.exports = {
   signup,
   login,
@@ -246,4 +257,5 @@ module.exports = {
   userWonItems,
   userEngagedItems,
   verification,
+  usersBlocked
 };
