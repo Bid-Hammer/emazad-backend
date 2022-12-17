@@ -155,10 +155,9 @@ const getUserProfile = async (req, res) => {
 const updateUserProfile = async (req, res) => {
   try {
     const id = req.params.id;
-    const updatedUser = await userModel.findOne({ where: { id: id } });
     const obj = req.body;
 
-    const updated = await updatedUser.update(obj);
+    const updated = await userModel.update(obj, { where: { id: id }});
     res.status(202).json(updated);
   } catch (error) {
     res.status(500).send(error.message);
