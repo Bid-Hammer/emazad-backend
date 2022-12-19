@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     itemImage: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
-      defaultValue: ["http://www.sitech.co.id/assets/img/products/default.jpg"]
+      defaultValue: ["https://res.cloudinary.com/skokash/image/upload/v1671490517/No_Image_Available2_cazymj.jpg"]
       ,
     },
     category: {
