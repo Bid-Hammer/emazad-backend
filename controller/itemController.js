@@ -33,13 +33,13 @@ const getItems = async (req, res) => {
 
     const sortedItems = (items) => {
       if (status === "standby") {
-        return items.sort((a, b) => b.startDate - a.startDate);
+        return items.sort((a, b) => a.startDate - b.startDate);
       } else if (status === "active") {
-        return items.sort((a, b) => b.endDate - a.endDate);
+        return items.sort((a, b) => a.endDate - b.endDate);
       } else if (status === "sold" || status === "expired") {
-        return items.sort((a, b) => b.createdAt - a.createdAt);
+        return items.sort((a, b) => a.createdAt - b.createdAt);
       } else {
-        return items.sort((a, b) => b.endDate - a.endDate);
+        return items.sort((a, b) => a.endDate - b.endDate);
       }
     };
 
@@ -78,7 +78,7 @@ const getOneItem = async (req, res) => {
       order: [
         [bidModel, "createdAt", "DESC"],
         [commentModel, "createdAt", "DESC"],
-        [commentModel, replyModel, "createdAt", "DESC"],
+        [commentModel, replyModel, "createdAt", "ASC"],
       ],
     });
     res.status(200).json(item);
@@ -123,7 +123,7 @@ const getTrendingItems = async (req, res) => {
       where: { status: "active" },
       include: itemsIncludes,
     });
-    const sortedItems = items.sort((a, b) => b.Bids.length - a.Bids.length && a.endDate - b.endDate);
+    const sortedItems = items.sort((a, b) => a.endDate - b.endDate);
     res.status(200).json(sortedItems);
   } catch (err) {
     console.log("Error in GeneralRoutes.getTrendingItems: ", err.message);
