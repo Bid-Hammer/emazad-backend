@@ -12,7 +12,7 @@ const {
   userWonItems,
   userEngagedItems,
   verification,
-  usersBlocked
+  usersBlocked,
 } = require("../controller/userController");
 const bearerAuth = require("../middlewares/bearer-auth");
 const basicAuth = require("../middlewares/basic-auth");
@@ -22,16 +22,16 @@ const basicAuth = require("../middlewares/basic-auth");
 router.post("/signup", basicAuth, signup);
 router.post("/login", login);
 router.get("/users", bearerAuth, allUsers);
-router.post('/verification/:id', verification);
+router.post("/verification/:id", verification);
 
-router.get("/profile/:id", bearerAuth, getUserProfile);
+router.get("/profile/:id", getUserProfile);
 router.put("/profile/:id", bearerAuth, updateUserProfile);
 
-router.get("/userActiveItems/:id", bearerAuth, userActiveItems);
-router.get("/userStandByItems/:id", bearerAuth, userStandByItems);
-router.get("/userSoldItems/:id", bearerAuth, userSoldItems);
-router.get("/userWonItems/:id", bearerAuth, userWonItems);
-router.get("/userEngagedItems/:id", bearerAuth, userEngagedItems);
+router.get("/userActiveItems/:id", userActiveItems);
+router.get("/userStandByItems/:id", userStandByItems);
+router.get("/userSoldItems/:id", userSoldItems);
+router.get("/userWonItems/:id", userWonItems);
+router.get("/userEngagedItems/:id", userEngagedItems);
 router.get("/usersBlocked", usersBlocked);
 
 module.exports = router;

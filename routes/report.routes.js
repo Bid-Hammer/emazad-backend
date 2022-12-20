@@ -3,10 +3,12 @@ const express = require("express");
 const router = express.Router();
 const { Report } = require("../models");
 const { getReportedUser } = require("../controller/reportController");
+const bearerAuth = require("../middlewares/bearer-auth");
+
 // Routes
 router.get("/report", getReport);
-router.post("/report", createReport);
-router.delete("/report/:id", deleteReport);
+router.post("/report", bearerAuth, createReport);
+router.delete("/report/:id", bearerAuth, deleteReport);
 router.get("/report/:id", getOneReport);
 router.get("/reportItems", getReportedUser);
 
@@ -36,6 +38,5 @@ async function deleteReport(req, res) {
   let deletedReport = await Report.delete(id);
   res.status(204).send("Report Deleted Successfully");
 }
-
 
 module.exports = router;

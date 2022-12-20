@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const { Notification } = require("../models");
 const { getNotifications, getUserNotifications, updateNotification } = require("../controller/notificationController");
+const bearerAuth = require("../middlewares/bearer-auth");
 
 // Routes
 router.get("/notif", getNotifications);

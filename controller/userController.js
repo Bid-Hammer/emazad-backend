@@ -11,15 +11,25 @@ const OAuth2 = google.auth.OAuth2;
 const OAuth2_client = new OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET);
 OAuth2_client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
+const excludedAttributes = ["password", "email", "role", "createdAt", "updatedAt", "token"];
+const itemsIncludes = [
+  { model: userModel, attributes: { exclude: excludedAttributes } },
+  { model: bidModel, include: [{ model: userModel, attributes: { exclude: excludedAttributes } }] },
+];
+
 // function for signing up
 const signup = async (req, res) => {
-  console.log(req.body)
+  console.log(req.body);
   try {
     const data = {
       ...req.body,
 
       // if the image is null then it will take the default image if the gender is male or female
-      image: req.body.image ? req.body.image : req.body.gender === "male" ? "https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png" : "https://whitneyumc.org/wp-content/uploads/2021/12/istockphoto-1136531172-612x612-1-400x400.jpg",
+      image: req.body.image
+        ? req.body.image
+        : req.body.gender === "male"
+        ? "https://cdn.pixabay.com/photo/2013/07/13/12/07/avatar-159236__340.png"
+        : "https://whitneyumc.org/wp-content/uploads/2021/12/istockphoto-1136531172-612x612-1-400x400.jpg",
 
       password: await bcrypt.hash(req.body.password, 10),
     };
@@ -59,9 +69,9 @@ const signup = async (req, res) => {
       });
 
       return res.status(201).json(user);
-    } else {  
+    } else {
       return res.status(400).send("Invalid Data");
-      }
+    }
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -138,13 +148,11 @@ const allUsers = async (req, res) => {
   }
 };
 
-
-const excludedAttributes = ["password", "capabilities", "role", "updatedAt", "token", "confirmed"];
 // function for getting user profile
 const getUserProfile = async (req, res) => {
   try {
     const id = req.params.id;
-    const user = await userModel.findOne({ where: { id: id }, attributes: { exclude: excludedAttributes }});
+    const user = await userModel.findOne({ where: { id: id }, attributes: { exclude: excludedAttributes } });
     res.status(200).json(user);
   } catch (error) {
     res.status(500).send(error.message);
@@ -156,9 +164,9 @@ const updateUserProfile = async (req, res) => {
   try {
     const id = req.params.id;
     const obj = req.body;
-  
-    await userModel.update(obj, { where: { id: id }});
-    const updateUser = await userModel.findOne({ where: { id: id }});
+
+    await userModel.update(obj, { where: { id: id } });
+    const updateUser = await userModel.findOne({ where: { id: id } });
     res.status(202).json(updateUser);
   } catch (error) {
     res.status(500).send(error.message);
@@ -171,6 +179,8 @@ const userActiveItems = async (req, res) => {
     const id = req.params.id;
     const items = await itemModel.findAll({
       where: { userId: id, status: "active" },
+      include: itemsIncludes,
+      order: [["endDate", "ASC"]],
     });
     res.status(200).json(items);
   } catch (error) {
@@ -184,6 +194,8 @@ const userStandByItems = async (req, res) => {
     const id = req.params.id;
     const items = await itemModel.findAll({
       where: { userId: id, status: "standby" },
+      include: itemsIncludes,
+      order: [["startDate", "ASC"]],
     });
     res.status(200).json(items);
   } catch (error) {
@@ -197,6 +209,8 @@ const userSoldItems = async (req, res) => {
     const id = req.params.id;
     const items = await itemModel.findAll({
       where: { userId: id, status: ["sold", "expired"] },
+      include: itemsIncludes,
+      order: [["endDate", "DESC"]],
     });
     res.status(200).json(items);
   } catch (error) {
@@ -215,7 +229,10 @@ const userWonItems = async (req, res) => {
         item.Bids[item.Bids.length - 1].dataValues.userId === Number(id) &&
         (item.status === "sold" || item.status === "expired")
     );
-    res.status(200).json(wonItems);
+    const sortedWonItems = wonItems.sort((a, b) => {
+      return new Date(b.endDate) - new Date(a.endDate);
+    });
+    res.status(200).json(sortedWonItems);
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -228,6 +245,7 @@ const userEngagedItems = async (req, res) => {
     const items = await itemModel.findAll({
       where: { status: "active" },
       include: { model: bidModel, where: { userId: id } },
+      order: [["endDate", "ASC"]],
     });
     res.status(200).json(items);
   } catch (error) {
@@ -245,7 +263,6 @@ const usersBlocked = async (req, res) => {
   }
 };
 
-
 module.exports = {
   signup,
   login,
@@ -258,5 +275,5 @@ module.exports = {
   userWonItems,
   userEngagedItems,
   verification,
-  usersBlocked
+  usersBlocked,
 };

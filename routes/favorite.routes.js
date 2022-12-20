@@ -3,12 +3,13 @@ const express = require("express");
 const router = express.Router();
 const { Favorite, userModel, itemModel } = require("../models");
 const { userFavorites, createFavorite } = require("../controller/favoriteController");
+const bearerAuth = require("../middlewares/bearer-auth");
 
 // Routes
 router.get("/favorite", getFavorites);
 router.get("/favorite/:id", getFavoriteById);
-router.post("/favorite", createFavorite);
-router.delete("/favorite/:id", deleteFavorite);
+router.post("/favorite", bearerAuth, createFavorite);
+router.delete("/favorite/:id", bearerAuth, deleteFavorite);
 router.get("/userFavorite/:id", userFavorites);
 
 // function to get all favorites ---> not needed

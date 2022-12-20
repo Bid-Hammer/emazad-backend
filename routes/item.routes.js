@@ -5,12 +5,13 @@ const { Item, Notification, bidModel } = require("../models/index");
 // const uploadItemImg = require("../middlewares/upload-itemImg");
 
 const { getItems, getOneItem, addItem, updateItem, getTrendingItems } = require("../controller/itemController");
+const bearerAuth = require("../middlewares/bearer-auth");
 
 // Routes
-router.post("/item", addItem);
-router.put("/item/:id", updateItem);
-router.delete("/item/:id", deleteItem);
-router.put("/itemhide/:id", hideItem);
+router.post("/item",bearerAuth, addItem);
+router.put("/item/:id",bearerAuth, updateItem);
+router.delete("/item/:id",bearerAuth, deleteItem);
+router.put("/itemhide/:id",bearerAuth, hideItem);
 
 // get items by category and status
 router.get("/items", getItems);
@@ -19,7 +20,6 @@ router.get("/items/:status/:category", getItems);
 router.get("/items/:status/:category/:subCategory", getItems);
 router.get("/item/:id", getOneItem);
 router.get("/trending", getTrendingItems);
-
 
 // function to delete an item by id
 async function deleteItem(req, res) {
@@ -82,7 +82,6 @@ setInterval(async () => {
   } catch (err) {
     console.log(err);
   }
-
 }, 10000);
 
 module.exports = router;
