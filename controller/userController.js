@@ -12,6 +12,8 @@ const OAuth2_client = new OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRE
 OAuth2_client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
 const excludedAttributes = ["password", "email", "role", "createdAt", "updatedAt", "token"];
+const excludedUserAttributes = ["password", "capabilities", "role", "updatedAt", "token", "confirmed"];
+
 const itemsIncludes = [
   { model: userModel, attributes: { exclude: excludedAttributes } },
   { model: bidModel, include: [{ model: userModel, attributes: { exclude: excludedAttributes } }] },
@@ -152,7 +154,7 @@ const allUsers = async (req, res) => {
 const getUserProfile = async (req, res) => {
   try {
     const id = req.params.id;
-    const user = await userModel.findOne({ where: { id: id }, attributes: { exclude: excludedAttributes } });
+    const user = await userModel.findOne({ where: { id: id }, attributes: { exclude: excludedUserAttributes } });
     res.status(200).json(user);
   } catch (error) {
     res.status(500).send(error.message);
