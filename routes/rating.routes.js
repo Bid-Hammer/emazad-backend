@@ -3,13 +3,14 @@ const express = require("express");
 const router = express.Router();
 const { Rating } = require("../models");
 const { createRating, getUserRating } = require("../controller/ratingController");
+const bearerAuth = require("../middlewares/bearer-auth");
 
 // Routes
 router.get("/rating", getRatings);
 router.get("/rating/:id", getRatingById);
-router.post("/rating", createRating);
-router.put("/rating/:id", updateRating);
-router.delete("/rating/:id", deleteRating);
+router.post("/rating", bearerAuth, createRating);
+router.put("/rating/:id", bearerAuth, updateRating);
+router.delete("/rating/:id", bearerAuth, deleteRating);
 router.get("/userRating/:id", getUserRating);
 
 // function to get all ratings

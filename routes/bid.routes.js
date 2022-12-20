@@ -3,11 +3,12 @@ const express = require("express");
 const router = express.Router();
 const { Bid } = require("../models");
 const createBid = require("../controller/bidController");
+const bearerAuth = require("../middlewares/bearer-auth");
 
 // Routes
 router.get("/bid", getBid);
 router.get("/bid/:id", getOneBid);
-router.post("/bid", createBid);
+router.post("/bid", bearerAuth, createBid);
 
 // function to get all bids
 async function getBid(req, res) {
