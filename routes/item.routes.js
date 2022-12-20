@@ -8,10 +8,10 @@ const { getItems, getOneItem, addItem, updateItem, getTrendingItems } = require(
 const bearerAuth = require("../middlewares/bearer-auth");
 
 // Routes
-router.post("/item",bearerAuth, addItem);
-router.put("/item/:id",bearerAuth, updateItem);
-router.delete("/item/:id",bearerAuth, deleteItem);
-router.put("/itemhide/:id",bearerAuth, hideItem);
+router.post("/item", bearerAuth, addItem);
+router.put("/item/:id", bearerAuth, updateItem);
+router.delete("/item/:id", bearerAuth, deleteItem);
+router.put("/itemhide/:id", bearerAuth, hideItem);
 
 // get items by category and status
 router.get("/items", getItems);
