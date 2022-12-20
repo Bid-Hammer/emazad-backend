@@ -30,18 +30,7 @@ const getItems = async (req, res) => {
     let status = req.params.status;
     let category = req.params.category;
     let subCategory = req.params.subCategory;
-
-    const sortedItems = (items) => {
-      if (status === "standby") {
-        return items.sort((a, b) => a.startDate - b.startDate);
-      } else if (status === "active") {
-        return items.sort((a, b) => a.endDate - b.endDate);
-      } else if (status === "sold" || status === "expired") {
-        return items.sort((a, b) => a.createdAt - b.createdAt);
-      } else {
-        return items.sort((a, b) => a.endDate - b.endDate);
-      }
-    };
+    let { page, limit } = req.query;
 
     let handelWhere = {};
     if (status && !category && !subCategory) {
@@ -61,8 +50,17 @@ const getItems = async (req, res) => {
     const items = await itemModel.findAll({
       where: handelWhere,
       include: itemsIncludes,
+      limit: limit,
+      offset: page * limit,
+      order: [
+        status === "standby" ? ["startDate", "ASC"] : status === "active" ? ["endDate", "ASC"] : ["createdAt", "DESC"],
+        [bidModel, "createdAt", "DESC"],
+      ],
     });
-    res.status(200).json(sortedItems(items));
+
+    const count = await itemModel.count({ where: handelWhere });
+
+    res.status(200).json({ items, count });
   } catch (err) {
     console.log("Error in GeneralRoutes.readItems: ", err.message);
   }
