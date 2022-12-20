@@ -53,7 +53,7 @@ const getItems = async (req, res) => {
       limit: limit,
       offset: page * limit,
       order: [
-        status === "standby" ? ["startDate", "ASC"] : status === "active" ? ["endDate", "ASC"] : ["createdAt", "DESC"],
+        status === "standby" ? ["startDate", "ASC"] : status === "active" ? ["endDate", "ASC"] : ["endDate", "DESC"],
         [bidModel, "createdAt", "DESC"],
       ],
     });

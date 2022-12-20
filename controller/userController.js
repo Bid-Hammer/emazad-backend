@@ -212,7 +212,10 @@ const userSoldItems = async (req, res) => {
     const items = await itemModel.findAll({
       where: { userId: id, status: ["sold", "expired"] },
       include: itemsIncludes,
-      order: [["endDate", "DESC"]],
+      order: [
+        ["endDate", "DESC"],
+        [bidModel, "createdAt", "DESC"],
+      ],
     });
     res.status(200).json(items);
   } catch (error) {
@@ -224,17 +227,22 @@ const userSoldItems = async (req, res) => {
 const userWonItems = async (req, res) => {
   try {
     const id = req.params.id;
-    const user = await itemModel.findAll({ include: { model: bidModel, include: userModel } });
-    const wonItems = user.filter(
-      (item) =>
-        item.Bids.length > 0 &&
-        item.Bids[item.Bids.length - 1].dataValues.userId === Number(id) &&
-        (item.status === "sold" || item.status === "expired")
-    );
-    const sortedWonItems = wonItems.sort((a, b) => {
-      return new Date(b.endDate) - new Date(a.endDate);
+
+    const items = await itemModel.findAll({
+      where: { status: ["sold", "expired"] },
+      include: [
+        { model: userModel, attributes: { exclude: excludedUserAttributes } },
+        { model: bidModel, include: { model: userModel, attributes: { exclude: excludedUserAttributes } } },
+      ],
+      order: [
+        ["endDate", "DESC"],
+        [bidModel, "createdAt", "DESC"],
+      ],
     });
-    res.status(200).json(sortedWonItems);
+
+    const wonItems = items.filter((item) => item.Bids.length > 0 && item.Bids[0].dataValues.userId === Number(id));
+
+    res.status(200).json(wonItems);
   } catch (error) {
     res.status(500).send(error.message);
   }
